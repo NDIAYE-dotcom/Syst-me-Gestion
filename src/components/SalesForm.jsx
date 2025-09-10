@@ -257,6 +257,11 @@ const SalesForm = ({ products = [], onSave, onCancel }) => {
               {submitting ? "Enregistrement..." : "Enregistrer"}
             </button>
           </div>
+          {!isValid && (
+            <div style={{color:'red',marginTop:'8px',fontSize:'0.95em'}}>
+              Veuillez remplir tous les champs obligatoires correctement.
+            </div>
+          )}
         </form>
       </div>
     </div>

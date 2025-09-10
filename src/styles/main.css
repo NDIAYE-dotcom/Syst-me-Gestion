@@ -1,3 +1,55 @@
+/* Responsive grid pour la liste des ventes */
+.sales-list-grid {
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 24px;
+}
+.sale-card {
+  background: var(--card-bg);
+  color: var(--primary-text);
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(25,118,210,0.10);
+  padding: 18px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+  border: 1px solid rgba(67,206,162,0.08);
+}
+.sale-card h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.sale-card p {
+  margin: 4px 0;
+  font-size: 1rem;
+}
+@media (max-width: 900px) {
+  .sales-list-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+}
+@media (max-width: 600px) {
+  .sales-list-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .sale-card {
+    padding: 10px 6px;
+    border-radius: 8px;
+  }
+  .sale-card h3 {
+    font-size: 1rem;
+  }
+  .sale-card p {
+    font-size: 0.95rem;
+  }
+}
 /* --- Thème sombre/clair étendu --- */
 .theme-light {
   --primary-bg: #f5f5f5;
@@ -319,7 +371,7 @@ body.theme-dark {
     padding: 12px 6px;
     border-radius: 8px;
   }
-  .sale-info h3 {
+  .sale-card h3 {
     font-size: 1rem;
   }
 }
@@ -552,4 +604,236 @@ body {
 
 .page-header h1 {
   color: var(--primary-green);
+}
+
+/* Ajout de styles spécifiques pour améliorer le mode sombre */
+.theme-dark .form-group input,
+.theme-dark .form-group select {
+  background: var(--card-bg);
+  color: var(--primary-text);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.theme-dark .form-group input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.theme-dark .modal {
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
+}
+
+.theme-dark .btn-primary {
+  background: var(--btn-bg);
+  color: var(--btn-text);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Ajustements pour les champs de formulaire en mode sombre */
+.theme-dark .form-group input,
+.theme-dark .form-group select {
+  background-color: var(--card-bg);
+  color: var(--primary-text);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.theme-dark .form-group input::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.theme-dark .form-group input:focus,
+.theme-dark .form-group select:focus {
+  outline: 2px solid var(--btn-bg);
+  border-color: var(--btn-bg);
+}
+
+/* Ajustements pour les libellés, résumés et messages en mode sombre */
+.theme-dark .form-group label {
+  color: var(--primary-text);
+}
+
+.theme-dark .sale-summary {
+  background-color: var(--card-bg);
+  color: var(--primary-text);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.theme-dark .sale-summary p {
+  margin: 4px 0;
+}
+
+.theme-dark .no-sales-message {
+  color: rgba(255, 255, 255, 0.6);
+  font-style: italic;
+  text-align: center;
+  margin-top: 16px;
+}
+
+/* Ajustements pour rendre les textes visibles en mode sombre */
+.theme-dark h2,
+.theme-dark .form-group label,
+.theme-dark .sale-summary p,
+.theme-dark .form-group input,
+.theme-dark .form-group select {
+  color: var(--primary-text);
+}
+
+.theme-dark .modal {
+  color: var(--primary-text);
+}
+
+/* Correction visibilité des labels et titres en mode sombre */
+.theme-dark .modal h2,
+.theme-dark .modal label,
+.theme-dark .modal .form-group label,
+.theme-dark .modal .form-group,
+.theme-dark .modal .form-group input,
+.theme-dark .modal .form-group select,
+.theme-dark .modal .sale-summary,
+.theme-dark .modal .sale-summary p {
+  color: #f5f5f5 !important;
+}
+
+.theme-dark .modal {
+  background: var(--modal-bg);
+}
+
+.theme-dark .modal .form-group input,
+.theme-dark .modal .form-group select {
+  background: #232a36;
+  border: 1px solid rgba(255,255,255,0.2);
+}
+
+.theme-dark .modal .form-group input::placeholder {
+  color: rgba(255,255,255,0.6);
+}
+
+.theme-dark .modal .sale-summary {
+  background: #232a36;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+.theme-dark .modal .no-sales-message {
+  color: rgba(255,255,255,0.7);
+}
+
+/* Responsive pour la liste des ventes */
+@media (max-width: 900px) {
+  .sales-list {
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+}
+@media (max-width: 600px) {
+  .sales-list {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .sale-card {
+    padding: 12px 6px;
+    border-radius: 8px;
+  }
+  .sale-card h3 {
+    font-size: 1rem;
+  }
+}
+/* Correction mode sombre pour la liste des ventes */
+.theme-dark .sale-card {
+  background: var(--card-bg) !important;
+  color: var(--primary-text) !important;
+  border: 1px solid rgba(255,255,255,0.10);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.18);
+}
+.theme-dark .sale-card h3,
+.theme-dark .sale-card p,
+.theme-dark .sale-card strong {
+  color: var(--primary-text) !important;
+  font-weight: 600;
+}
+
+/* Amélioration du bloc Statut des Paiements dans le dashboard */
+.theme-dark .stat-card {
+  background: var(--card-bg);
+  color: var(--primary-text);
+  border: 1px solid rgba(255,255,255,0.10);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.18);
+}
+.theme-dark .stat-card h3,
+.theme-dark .stat-card .stat-value {
+  color: var(--primary-text);
+}
+.stat-card {
+  background: var(--card-bg);
+  color: var(--primary-text);
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(25,118,210,0.10);
+  padding: 18px 12px;
+  margin-bottom: 12px;
+  text-align: center;
+}
+.stat-card h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.stat-value {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-top: 4px;
+}
+.stat-value.success {
+  color: #43cea2;
+}
+.stat-value.warning {
+  color: #ff9800;
+}
+.stat-value.info {
+  color: #1976d2;
+}
+@media (max-width: 900px) {
+  .stats-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+}
+@media (max-width: 600px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .stat-card {
+    padding: 10px 6px;
+    border-radius: 8px;
+  }
+  .stat-card h3 {
+    font-size: 1rem;
+  }
+  .stat-value {
+    font-size: 1.1rem;
+  }
+}
+
+/* Style pour le bouton fermer de la facture */
+.invoice-close-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  font-size: 2rem;
+  background: rgba(67,206,162,0.85);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  transition: background 0.2s;
+}
+.invoice-close-btn:hover {
+  background: #1976d2;
 }

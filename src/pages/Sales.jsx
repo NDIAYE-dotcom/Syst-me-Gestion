@@ -4,10 +4,12 @@ import { supabase } from '../supabaseClient';
 import SalesForm from '../components/SalesForm';
 import SalesList from '../components/SalesList';
 
+
 const Sales = () => {
   const [sales, setSales] = useState([]);
   const [products, setProducts] = useState([]);
   const [showForm, setShowForm] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     fetchSales();
@@ -19,16 +21,22 @@ const Sales = () => {
       .from('sales')
       .select('*')
       .order('created_at', { ascending: false });
-    
-    if (!error) setSales(data);
+    if (error) {
+      setError("Erreur récupération ventes : " + error.message);
+    } else {
+      setSales(data);
+    }
   };
 
   const fetchProducts = async () => {
     const { data, error } = await supabase
       .from('products')
       .select('*');
-    
-    if (!error) setProducts(data);
+    if (error) {
+      setError("Erreur récupération produits : " + error.message);
+    } else {
+      setProducts(data);
+    }
   };
 
   const handleNewSale = () => {
@@ -39,8 +47,9 @@ const Sales = () => {
     const { error } = await supabase
       .from('sales')
       .insert([{ ...saleData, created_at: new Date() }]);
-    
-    if (!error) {
+    if (error) {
+      setError("Erreur enregistrement vente : " + error.message);
+    } else {
       setShowForm(false);
       fetchSales();
     }
@@ -55,6 +64,10 @@ const Sales = () => {
         </button>
       </div>
 
+      {error && (
+        <div style={{color:'red',marginBottom:'12px'}}>{error}</div>
+      )}
+
       {showForm && (
         <SalesForm 
           products={products} 
@@ -63,7 +76,7 @@ const Sales = () => {
         />
       )}
 
-      <SalesList sales={sales} />
+      <SalesList sales={sales} products={products} />
     </div>
   );
 };

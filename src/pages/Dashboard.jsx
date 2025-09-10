@@ -15,17 +15,58 @@ const Dashboard = () => {
   }, [timeRange]);
 
   const fetchSalesData = async () => {
-    // Récupérer les données de vente depuis Supabase
-    // Filtrer par plage temporelle sélectionnée
+    const { data, error } = await supabase
+      .from('sales')
+      .select('*');
+    if (!error && data) {
+      setSalesData(data);
+    }
   };
 
   const calculateTotals = () => {
-    // Calculer les totaux des ventes, factures payées, etc.
+    const now = new Date();
+    let dailyTotal = 0, paidInvoices = 0, unpaidInvoices = 0, proformaInvoices = 0;
+    salesData.forEach(sale => {
+      const saleDate = new Date(sale.created_at);
+      // Ventes du jour
+      if (
+        timeRange === 'daily' &&
+        saleDate.getDate() === now.getDate() &&
+        saleDate.getMonth() === now.getMonth() &&
+        saleDate.getFullYear() === now.getFullYear()
+      ) {
+        dailyTotal += Number(sale.total);
+      }
+      // Ventes du mois
+      if (
+        timeRange === 'monthly' &&
+        saleDate.getMonth() === now.getMonth() &&
+        saleDate.getFullYear() === now.getFullYear()
+      ) {
+        dailyTotal += Number(sale.total);
+      }
+      // Ventes de la semaine
+      if (
+        timeRange === 'weekly'
+      ) {
+        const firstDayOfWeek = new Date(now);
+        firstDayOfWeek.setDate(now.getDate() - now.getDay());
+        const lastDayOfWeek = new Date(firstDayOfWeek);
+        lastDayOfWeek.setDate(firstDayOfWeek.getDate() + 6);
+        if (saleDate >= firstDayOfWeek && saleDate <= lastDayOfWeek) {
+          dailyTotal += Number(sale.total);
+        }
+      }
+      // Statut factures
+      if (sale.status === 'paid') paidInvoices++;
+      if (sale.status === 'unpaid') unpaidInvoices++;
+      if (sale.status === 'proforma') proformaInvoices++;
+    });
     return {
-      dailyTotal: 0,
-      paidInvoices: 0,
-      unpaidInvoices: 0,
-      proformaInvoices: 0
+      dailyTotal,
+      paidInvoices,
+      unpaidInvoices,
+      proformaInvoices
     };
   };
 
