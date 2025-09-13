@@ -88,6 +88,14 @@ const InvoiceGenerator = ({ onClose, onCreated }) => {
       setError('Veuillez remplir tous les champs obligatoires correctement.');
       return;
     }
+    // Validation stricte pour chaque produit
+    for (const id of form.product_ids) {
+      const details = form.productsDetails[id] || {};
+      if (!details.quantity || !details.price || details.quantity <= 0 || details.price <= 0) {
+        setError('La quantité et le prix doivent être renseignés et supérieurs à zéro pour chaque produit.');
+        return;
+      }
+    }
     setSubmitting(true);
     try {
       const payload = {

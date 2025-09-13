@@ -179,7 +179,7 @@ const Login = () => {
             <li>✅ Services d'irrigation</li>
           </ul>
           <p className="contact-info">
-            Contact: <span style={{fontWeight:600}}>+221 33 123 45 67</span> | <span style={{fontWeight:600}}>contact@sogepi-afrique.com</span>
+            Contact: <span style={{fontWeight:600}}>+221 77 606 29 00</span> | <span style={{fontWeight:600}}>contact@sogepi-afrique.com</span>
           </p>
         </div>
       </div>

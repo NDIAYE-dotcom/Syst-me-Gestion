@@ -82,11 +82,21 @@ const SalesForm = ({ products = [], onSave, onCancel }) => {
     e.preventDefault();
     setError("");
 
+    // Validation stricte côté frontend
     if (!isValid) {
       setError(
         "Veuillez sélectionner un produit, saisir une quantité et un prix valides, et renseigner le client."
       );
       return;
+    }
+
+    // Vérification supplémentaire pour chaque produit
+    for (const id of saleData.product_ids) {
+      const details = saleData.productsDetails[id] || {};
+      if (!details.quantity || !details.price || details.quantity <= 0 || details.price <= 0) {
+        setError("La quantité et le prix doivent être renseignés et supérieurs à zéro pour chaque produit.");
+        return;
+      }
     }
 
     if (typeof onSave !== "function") {

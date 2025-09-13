@@ -1,5 +1,6 @@
 // App.js
 import React, { useState, useEffect } from 'react';
+import { SalesRefreshProvider } from './context/SalesRefreshContext';
 import { supabase } from './supabaseClient';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
@@ -54,15 +55,17 @@ function App() {
   };
 
   return (
-    <div className="app">
-      <Sidebar currentPage={currentPage} setCurrentPage={setCurrentPage} />
-      <div className="main-content">
-        <Header />
-        <div className="content">
-          {renderPage()}
+    <SalesRefreshProvider>
+      <div className="app">
+        <Sidebar currentPage={currentPage} setCurrentPage={setCurrentPage} />
+        <div className="main-content">
+          <Header />
+          <div className="content">
+            {renderPage()}
+          </div>
         </div>
       </div>
-    </div>
+    </SalesRefreshProvider>
   );
 }
 

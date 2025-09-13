@@ -49,9 +49,13 @@ const PaymentStatus = ({ data }) => {
 
     // Compter le nombre et le montant par statut
     data.forEach(sale => {
-      const amount = sale.quantity * sale.price;
+      let amount = 0;
+      if (Number(sale.quantity) > 0 && Number(sale.price) > 0) {
+        amount = Number(sale.quantity) * Number(sale.price);
+      } else if (Number(sale.total) > 0) {
+        amount = Number(sale.total);
+      }
       const status = sale.status || 'unpaid';
-      
       if (statusCount[status] !== undefined) {
         statusCount[status] += 1;
         statusAmount[status] += amount;

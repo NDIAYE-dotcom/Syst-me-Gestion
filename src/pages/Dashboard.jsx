@@ -17,10 +17,37 @@ const Dashboard = () => {
     fetchSalesData();
   }, [timeRange, refresh]);
 
+  // Ajout d'un effet pour forcer le rafraîchissement lors d'un changement de statut
+  // (à utiliser dans le composant parent ou lors de la mise à jour d'une facture)
+
   const fetchSalesData = async () => {
+    const now = new Date();
+    let startUTC, endUTC;
+    if (timeRange === 'daily') {
+      startUTC = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0)).toISOString();
+      endUTC = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59)).toISOString();
+    } else if (timeRange === 'weekly') {
+      // Premier jour de la semaine (dimanche)
+      const firstDayOfWeek = new Date(now);
+      firstDayOfWeek.setDate(now.getDate() - now.getDay());
+      startUTC = new Date(Date.UTC(firstDayOfWeek.getFullYear(), firstDayOfWeek.getMonth(), firstDayOfWeek.getDate(), 0, 0, 0)).toISOString();
+      // Dernier jour de la semaine (samedi)
+      const lastDayOfWeek = new Date(firstDayOfWeek);
+      lastDayOfWeek.setDate(firstDayOfWeek.getDate() + 6);
+      endUTC = new Date(Date.UTC(lastDayOfWeek.getFullYear(), lastDayOfWeek.getMonth(), lastDayOfWeek.getDate(), 23, 59, 59)).toISOString();
+    } else if (timeRange === 'monthly') {
+      // Premier jour du mois
+      startUTC = new Date(Date.UTC(now.getFullYear(), now.getMonth(), 1, 0, 0, 0)).toISOString();
+      // Dernier jour du mois
+      const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+      endUTC = new Date(Date.UTC(lastDay.getFullYear(), lastDay.getMonth(), lastDay.getDate(), 23, 59, 59)).toISOString();
+    }
+    // Charger uniquement les ventes de la période et les colonnes utiles
     const { data, error } = await supabase
       .from('sales')
-      .select('*');
+      .select('id,created_at,quantity,price,total,status')
+      .gte('created_at', startUTC)
+      .lte('created_at', endUTC);
     if (!error && data) {
       setSalesData(data);
     }
@@ -28,36 +55,44 @@ const Dashboard = () => {
 
   const calculateTotals = () => {
     const now = new Date();
-    let dailyTotal = 0, paidInvoices = 0, unpaidInvoices = 0, proformaInvoices = 0;
+    let dailyTotal = 0, paidInvoices = 0, unpaidInvoices = 0, proformaInvoices = 0, dailyCount = 0;
     salesData.forEach(sale => {
       const saleDate = new Date(sale.created_at);
-      // Ventes du jour
-      if (
-        timeRange === 'daily' &&
-        saleDate.getDate() === now.getDate() &&
-        saleDate.getMonth() === now.getMonth() &&
-        saleDate.getFullYear() === now.getFullYear()
-      ) {
-        dailyTotal += Number(sale.total);
-      }
-      // Ventes du mois
-      if (
-        timeRange === 'monthly' &&
-        saleDate.getMonth() === now.getMonth() &&
-        saleDate.getFullYear() === now.getFullYear()
-      ) {
-        dailyTotal += Number(sale.total);
-      }
-      // Ventes de la semaine
-      if (
-        timeRange === 'weekly'
-      ) {
-        const firstDayOfWeek = new Date(now);
-        firstDayOfWeek.setDate(now.getDate() - now.getDay());
-        const lastDayOfWeek = new Date(firstDayOfWeek);
-        lastDayOfWeek.setDate(firstDayOfWeek.getDate() + 6);
-        if (saleDate >= firstDayOfWeek && saleDate <= lastDayOfWeek) {
+      // Comptabiliser uniquement les ventes payées (statut 'paid')
+      if (sale.status === 'paid') {
+        // Ventes du jour
+        if (
+          timeRange === 'daily' &&
+          saleDate.getDate() === now.getDate() &&
+          saleDate.getMonth() === now.getMonth() &&
+          saleDate.getFullYear() === now.getFullYear()
+        ) {
+          if (Number(sale.quantity) > 0 && Number(sale.price) > 0) {
+            dailyTotal += Number(sale.quantity) * Number(sale.price);
+          } else if (Number(sale.total) > 0) {
+            dailyTotal += Number(sale.total);
+          }
+          dailyCount++;
+        }
+        // Ventes du mois
+        if (
+          timeRange === 'monthly' &&
+          saleDate.getMonth() === now.getMonth() &&
+          saleDate.getFullYear() === now.getFullYear()
+        ) {
           dailyTotal += Number(sale.total);
+        }
+        // Ventes de la semaine
+        if (
+          timeRange === 'weekly'
+        ) {
+          const firstDayOfWeek = new Date(now);
+          firstDayOfWeek.setDate(now.getDate() - now.getDay());
+          const lastDayOfWeek = new Date(firstDayOfWeek);
+          lastDayOfWeek.setDate(firstDayOfWeek.getDate() + 6);
+          if (saleDate >= firstDayOfWeek && saleDate <= lastDayOfWeek) {
+            dailyTotal += Number(sale.total);
+          }
         }
       }
       // Statut factures
@@ -69,11 +104,23 @@ const Dashboard = () => {
       dailyTotal,
       paidInvoices,
       unpaidInvoices,
-      proformaInvoices
+      proformaInvoices,
+      dailyCount
     };
   };
 
   const totals = calculateTotals();
+
+  // DEBUG : Filtrer et afficher les ventes du jour
+  const now = new Date();
+  const ventesDuJour = salesData.filter(sale => {
+    // Gestion UTC vs local
+    const saleDate = new Date(sale.created_at);
+    // Convertir la date locale du jour en UTC min/max
+    const startOfDayUTC = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0));
+    const endOfDayUTC = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59));
+    return saleDate >= startOfDayUTC && saleDate <= endOfDayUTC;
+  });
 
   return (
     <div className="dashboard">
@@ -104,6 +151,11 @@ const Dashboard = () => {
         <div className="stat-card">
           <h3>Ventes {timeRange === 'daily' ? 'du jour' : timeRange === 'weekly' ? 'de la semaine' : 'du mois'}</h3>
           <div className="stat-value">{totals.dailyTotal.toLocaleString()} FCFA</div>
+          {timeRange === 'daily' && (
+            <div style={{fontSize:'0.95em',color:'#228b22',marginTop:'4px'}}>
+              <strong>{totals.dailyCount}</strong> vente(s) du jour
+            </div>
+          )}
         </div>
         
         <div className="stat-card">
