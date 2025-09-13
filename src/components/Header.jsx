@@ -20,6 +20,7 @@ const Header = () => {
   const [notifications, setNotifications] = useState([]);
   const [showNotifications, setShowNotifications] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [salesToday, setSalesToday] = useState(0);
 
   useEffect(() => {
     // Récupérer l'utilisateur connecté
@@ -38,9 +39,30 @@ const Header = () => {
     // Charger les notifications
     loadNotifications();
 
+    // Charger les ventes du jour
+    loadSalesToday();
+
     // Nettoyer l'intervalle
     return () => clearInterval(timer);
   }, []);
+
+  // Fonction pour charger les ventes du jour
+  const loadSalesToday = async () => {
+    const today = new Date();
+    today.setHours(0,0,0,0);
+    const tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 1);
+    const { data, error } = await supabase
+      .from('sales')
+      .select('id,created_at')
+      .gte('created_at', today.toISOString())
+      .lt('created_at', tomorrow.toISOString());
+    if (!error && Array.isArray(data)) {
+      setSalesToday(data.length);
+    } else {
+      setSalesToday(0);
+    }
+  };
 
   const loadNotifications = async () => {
     // Simuler des notifications (à remplacer par une vraie source de données)
@@ -136,7 +158,7 @@ const Header = () => {
           <div className="stat-item">
             <span className="stat-icon">💰</span>
             <div className="stat-info">
-              <span className="stat-value">0</span>
+              <span className="stat-value">{salesToday}</span>
               <span className="stat-label">Ventes aujourd'hui</span>
             </div>
           </div>

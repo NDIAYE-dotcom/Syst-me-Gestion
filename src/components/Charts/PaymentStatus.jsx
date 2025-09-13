@@ -156,91 +156,49 @@ const PaymentStatus = ({ data }) => {
   }
 
   return (
-    <div className="payment-status-chart">
-      <ResponsiveContainer width="100%" height={250}>
-        <PieChart>
-          <Pie
-            data={chartData}
-            cx="50%"
-            cy="50%"
-            innerRadius={60}
-            outerRadius={80}
-            paddingAngle={2}
-            dataKey="value"
-            label={({ name, percent }) => 
-              `${name}: ${(percent * 100).toFixed(0)}%`
-            }
-            labelLine={false}
-          >
-            {chartData.map((entry, index) => (
-              <Cell key={`cell-${index}`} fill={entry.color} />
-            ))}
-          </Pie>
-          <Tooltip content={<CustomTooltip />} />
-          <Legend content={<CustomLegend />} />
-        </PieChart>
-      </ResponsiveContainer>
+    <div className="payment-status-chart improved">
+      <div className="chart-section">
+        <ResponsiveContainer width="100%" height={260}>
+          <PieChart>
+            <Pie
+              data={chartData}
+              cx="50%"
+              cy="50%"
+              innerRadius={65}
+              outerRadius={90}
+              paddingAngle={2}
+              dataKey="value"
+              label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+              labelLine={false}
+            >
+              {chartData.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={entry.color} />
+              ))}
+            </Pie>
+            <Tooltip content={<CustomTooltip />} />
+            <Legend content={<CustomLegend />} />
+          </PieChart>
+        </ResponsiveContainer>
+      </div>
 
-      <div className="payment-summary">
-        <h4>Récapitulatif des paiements</h4>
-        
-        <div className="summary-grid">
-          <div className="summary-item paid">
-            <div className="summary-header">
-              <span className="status-dot" style={{ backgroundColor: COLORS.paid }}></span>
-              <span className="summary-title">Payées</span>
-            </div>
-            <div className="summary-details">
-              <span className="summary-count">{summary.paid}</span>
-              <span className="summary-amount">{formatCurrency(summary.paidAmount)}</span>
-            </div>
-          </div>
-
-          <div className="summary-item unpaid">
-            <div className="summary-header">
-              <span className="status-dot" style={{ backgroundColor: COLORS.unpaid }}></span>
-              <span className="summary-title">Non payées</span>
-            </div>
-            <div className="summary-details">
-              <span className="summary-count">{summary.unpaid}</span>
-              <span className="summary-amount">{formatCurrency(summary.unpaidAmount)}</span>
-            </div>
-          </div>
-
-          <div className="summary-item proforma">
-            <div className="summary-header">
-              <span className="status-dot" style={{ backgroundColor: COLORS.proforma }}></span>
-              <span className="summary-title">Pro forma</span>
-            </div>
-            <div className="summary-details">
-              <span className="summary-count">{summary.proforma}</span>
-              <span className="summary-amount">{formatCurrency(summary.proformaAmount)}</span>
-            </div>
-          </div>
-
-          <div className="summary-item total">
-            <div className="summary-header">
-              <span className="summary-title">Total général</span>
-            </div>
-            <div className="summary-details">
-              <span className="summary-count">{summary.total}</span>
-              <span className="summary-amount">
-                {formatCurrency(summary.paidAmount + summary.unpaidAmount + summary.proformaAmount)}
-              </span>
-            </div>
-          </div>
+      <div className="summary-section">
+        <h4 className="summary-title-main">Récapitulatif des paiements</h4>
+        <div className="recap-list">
+          <div className="recap-list-item"><span className="recap-icon">✅</span><span className="recap-label">Payées</span><span>:</span><span className="recap-value">{formatCurrency(summary.paidAmount)}</span></div>
+          <div className="recap-list-item"><span className="recap-icon">❌</span><span className="recap-label">Non payées</span><span>:</span><span className="recap-value">{formatCurrency(summary.unpaidAmount)}</span></div>
+          <div className="recap-list-item"><span className="recap-icon">📝</span><span className="recap-label">Pro forma</span><span>:</span><span className="recap-value">{formatCurrency(summary.proformaAmount)}</span></div>
+          <div className="recap-list-item"><span className="recap-icon">📊</span><span className="recap-label">Total général</span><span>:</span><span className="recap-value">{formatCurrency(summary.paidAmount + summary.unpaidAmount + summary.proformaAmount)}</span></div>
         </div>
-
-        <div className="payment-stats">
+        <div className="payment-stats improved">
           <div className="stat-item">
-            <span className="stat-label">Taux de paiement:</span>
-            <span className="stat-value">
+            <span className="stat-label">Taux de paiement</span>
+            <span className="stat-value success">
               {formatPercentage(summary.paid, summary.total)}
             </span>
           </div>
           <div className="stat-item">
-            <span className="stat-label">En attente:</span>
-            <span className="stat-value">
+            <span className="stat-label">En attente</span>
+            <span className="stat-value warning">
               {formatPercentage(summary.unpaid, summary.total)}
             </span>
           </div>

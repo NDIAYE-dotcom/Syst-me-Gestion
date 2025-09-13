@@ -1,3 +1,56 @@
+.theme-dark .invoice-product-label,
+.theme-dark .form-group label {
+  color: #111 !important;
+  font-weight: bold;
+}
+.theme-dark .invoice-product-label {
+  color: #f5f5f5 !important;
+}
+.theme-dark .invoice-product-input {
+  background: #232a36;
+  color: #f5f5f5;
+  border: 1px solid #444;
+}
+.theme-dark #total {
+  background: #232a36 !important;
+  color: #43cea2 !important;
+  font-weight: bold;
+  border: 1px solid #444;
+}
+.theme-dark .sale-summary {
+  background: #232a36 !important;
+  color: #f5f5f5 !important;
+  border: 1px solid #444 !important;
+}
+/* Adaptation mode sombre pour InvoiceGenerator */
+.invoice-product-group {
+  background: var(--card-bg, #fff);
+  border: 1px solid var(--border-color, #eee);
+  color: #222;
+}
+.theme-dark .invoice-product-group {
+  background: #181c24;
+  border: 2px solid #43cea2;
+  color: #111;
+  box-shadow: 0 2px 8px rgba(67,206,162,0.10);
+}
+.invoice-product-label {
+  color: var(--primary-text, #222);
+  font-weight: bold;
+}
+.theme-dark .invoice-product-label {
+  color: #f5f5f5;
+}
+.invoice-product-input {
+  background: var(--input-bg, #fff);
+  color: var(--primary-text, #222);
+  border: 1px solid var(--border-color, #eee);
+}
+.theme-dark .invoice-product-input {
+  background: #232a36;
+  color: #f5f5f5;
+  border: 1px solid #444;
+}
 /* Responsive grid pour la liste des ventes */
 .sales-list-grid {
   max-width: 1200px;

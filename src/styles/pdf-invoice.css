@@ -1,0 +1,63 @@
+/* Styles pour la facture web harmonisée avec le PDF */
+.invoice-pdf {
+  background: #fff;
+  color: #222;
+  padding: 32px;
+  max-width: 800px;
+  margin: 0 auto;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.12);
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+.invoice-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+.invoice-logo {
+  height: 30px;
+  margin-right: 18px;
+}
+.invoice-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 1em;
+}
+.invoice-title {
+  font-size: 2rem;
+  color: #228b22;
+  background: #e3f2fd;
+  padding: 8px 24px;
+  border-radius: 12px;
+  font-weight: bold;
+  text-align: center;
+  align-self: center;
+}
+.invoice-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 18px;
+}
+.invoice-table th {
+  background: #228b22;
+  color: #fff;
+  padding: 8px;
+  border: 1px solid #ddd;
+}
+.invoice-table td {
+  padding: 8px;
+  border: 1px solid #ddd;
+}
+.invoice-summary {
+  margin-bottom: 18px;
+  font-size: 1.1em;
+  color: #228b22;
+  font-weight: bold;
+}
+.invoice-footer {
+  margin-top: 32px;
+  font-size: 0.95em;
+  color: #228b22;
+  text-align: center;
+}

@@ -44,9 +44,22 @@ const Sales = () => {
   };
 
   const handleSaveSale = async (saleData) => {
+    // Harmonisation du format d'enregistrement
+    const payload = {
+      client: saleData.client,
+      status: saleData.status || 'unpaid',
+      payment_method: saleData.payment_method || 'cash',
+      products: Array.isArray(saleData.products) ? saleData.products : (saleData.products ? [saleData.products] : []),
+      total: saleData.total || (
+        Array.isArray(saleData.products)
+          ? saleData.products.reduce((sum, p) => sum + (Number(p.quantity) * Number(p.price)), 0)
+          : (Number(saleData.quantity) * Number(saleData.price))
+      ),
+      created_at: new Date(),
+    };
     const { error } = await supabase
       .from('sales')
-      .insert([{ ...saleData, created_at: new Date() }]);
+      .insert([payload]);
     if (error) {
       setError("Erreur enregistrement vente : " + error.message);
     } else {

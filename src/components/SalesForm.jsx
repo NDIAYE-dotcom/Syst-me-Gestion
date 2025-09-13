@@ -3,9 +3,8 @@ import React, { useMemo, useState } from "react";
 
 const SalesForm = ({ products = [], onSave, onCancel }) => {
   const [saleData, setSaleData] = useState({
-    product_id: "",
-    quantity: 1,
-    price: 0,
+    product_ids: [], // tableau d'IDs produits sélectionnés
+    productsDetails: {}, // { id: { quantity, price } }
     client: "",
     payment_method: "cash",
     status: "unpaid", // unpaid, paid, proforma
@@ -14,53 +13,69 @@ const SalesForm = ({ products = [], onSave, onCancel }) => {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
 
-  const selectedProduct = useMemo(
-    () => products.find((p) => String(p.id) === String(saleData.product_id)),
-    [products, saleData.product_id]
+  const selectedProducts = useMemo(
+    () => products.filter((p) => saleData.product_ids.includes(String(p.id))),
+    [products, saleData.product_ids]
   );
 
   const totalAmount = useMemo(() => {
-    const q = Number(saleData.quantity);
-    const p = Number(saleData.price);
-    if (!Number.isFinite(q) || !Number.isFinite(p)) return 0;
-    return q * p;
-  }, [saleData.quantity, saleData.price]);
+    return selectedProducts.reduce((sum, prod) => {
+      const details = saleData.productsDetails[prod.id] || {};
+      const q = Number(details.quantity) || 0;
+      const p = Number(details.price) || 0;
+      return sum + q * p;
+    }, 0);
+  }, [selectedProducts, saleData.productsDetails]);
 
-  const handleProductChange = (e) => {
-    const productId = e.target.value; // garder en string pour le <select>
-    const product = products.find((p) => String(p.id) === String(productId));
-
-    setSaleData((prev) => ({
-      ...prev,
-      product_id: productId,
-      // on insère automatiquement le prix du produit sélectionné
-      price: product ? Number(product.price) || 0 : 0,
-    }));
+  const handleProductCheck = (id) => (e) => {
+    const checked = e.target.checked;
+    setSaleData((prev) => {
+      const ids = checked
+        ? [...prev.product_ids, String(id)]
+        : prev.product_ids.filter(pid => pid !== String(id));
+      const newDetails = { ...prev.productsDetails };
+      if (checked && !newDetails[id]) {
+        const prod = products.find(p => String(p.id) === String(id));
+        newDetails[id] = {
+          quantity: 1,
+          price: prod ? Number(prod.price) || 0 : 0
+        };
+      }
+      if (!checked) {
+        delete newDetails[id];
+      }
+      return {
+        ...prev,
+        product_ids: ids,
+        productsDetails: newDetails
+      };
+    });
   };
 
-  const handleNumberChange = (key) => (e) => {
-    // Autorise champ vide le temps de la saisie, convertit proprement ensuite
+  const handleProductDetailChange = (id, key) => (e) => {
     const raw = e.target.value;
     setSaleData((prev) => ({
       ...prev,
-      [key]: raw === "" ? "" : Number(raw),
+      productsDetails: {
+        ...prev.productsDetails,
+        [id]: {
+          ...prev.productsDetails[id],
+          [key]: raw === "" ? "" : Number(raw)
+        }
+      }
     }));
   };
 
   const isValid = useMemo(() => {
-    const hasProduct = saleData.product_id !== "";
-    const qty = Number(saleData.quantity);
-    const price = Number(saleData.price);
+    const hasProducts = saleData.product_ids.length > 0;
+    const allValid = saleData.product_ids.every(id => {
+      const details = saleData.productsDetails[id] || {};
+      const qty = Number(details.quantity);
+      const price = Number(details.price);
+      return Number.isFinite(qty) && qty > 0 && Number.isFinite(price) && price > 0;
+    });
     const clientOk = String(saleData.client).trim().length > 0;
-
-    return (
-      hasProduct &&
-      Number.isFinite(qty) &&
-      qty > 0 &&
-      Number.isFinite(price) &&
-      price > 0 &&
-      clientOk
-    );
+    return hasProducts && allValid && clientOk;
   }, [saleData]);
 
   const handleSubmit = async (e) => {
@@ -87,9 +102,15 @@ const SalesForm = ({ products = [], onSave, onCancel }) => {
       // Normalise les types avant envoi
       const payload = {
         ...saleData,
-        product_id: selectedProduct ? selectedProduct.id : saleData.product_id,
-        quantity: Number(saleData.quantity),
-        price: Number(saleData.price),
+        products: saleData.product_ids.map(id => {
+          const prod = products.find(p => String(p.id) === String(id));
+          return {
+            id,
+            name: prod?.name || '',
+            quantity: Number(saleData.productsDetails[id]?.quantity),
+            price: Number(saleData.productsDetails[id]?.price)
+          };
+        }),
         total: totalAmount,
       };
 
@@ -122,57 +143,67 @@ const SalesForm = ({ products = [], onSave, onCancel }) => {
         )}
 
         <form onSubmit={handleSubmit} noValidate>
-          {/* Produit */}
+          {/* Produits (cases à cocher) */}
           <div className="form-group">
-            <label htmlFor="product">Produit/Service</label>
-            <select
-              id="product"
-              value={saleData.product_id || ""}
-              onChange={handleProductChange}
-              required
-            >
-              <option value="">Sélectionner un produit/service</option>
+            <label style={{fontWeight:'bold',marginBottom:'6px',display:'block'}}>Produits/Services</label>
+            <div style={{display:'flex',flexDirection:'column',gap:'8px'}}>
               {products.map((product) => (
-                <option key={product.id} value={String(product.id)}>
-                  {product.name} - {Number(product.price).toLocaleString()} FCFA
-                </option>
+                <label key={product.id} style={{display:'flex',alignItems:'center',fontSize:'1em',color:'#222'}}>
+                  <input
+                    type="checkbox"
+                    style={{width:'16px',height:'16px'}}
+                    checked={saleData.product_ids.includes(String(product.id))}
+                    onChange={handleProductCheck(product.id)}
+                  />
+                  <span style={{marginLeft:'8px'}}>{product.name} <span style={{color:'#228b22',fontWeight:'bold'}}>- {Number(product.price).toLocaleString()} FCFA</span></span>
+                </label>
               ))}
-            </select>
+            </div>
           </div>
 
-          {/* Quantité */}
-          <div className="form-group">
-            <label htmlFor="quantity">Quantité</label>
-            <input
-              id="quantity"
-              type="number"
-              inputMode="numeric"
-              min="1"
-              value={saleData.quantity}
-              onChange={handleNumberChange("quantity")}
-              required
-            />
-          </div>
-
-          {/* Prix unitaire */}
-          <div className="form-group">
-            <label htmlFor="price">Prix unitaire (FCFA)</label>
-            <input
-              id="price"
-              type="number"
-              inputMode="decimal"
-              min="1"
-              step="0.01"
-              value={saleData.price}
-              onChange={handleNumberChange("price")}
-              required
-            />
-          </div>
+          {/* Quantité et prix pour chaque produit sélectionné */}
+          {saleData.product_ids.map(id => {
+            const prod = products.find(p => String(p.id) === String(id));
+            const details = saleData.productsDetails[id] || {};
+            return (
+              <div key={id} className="form-group" style={{border:'1px solid #eee',borderRadius:'6px',padding:'8px',marginBottom:'8px',background:'#f9f9f9'}}>
+                <strong style={{color:'#222'}}>{prod?.name || id}</strong>
+                <div style={{display:'flex',gap:'12px',marginTop:'6px'}}>
+                  <div>
+                    <label style={{fontSize:'0.95em'}}>Quantité</label>
+                    <input
+                      type="number"
+                      min="1"
+                      value={details.quantity !== undefined ? details.quantity : 1}
+                      onChange={handleProductDetailChange(id, "quantity")}
+                      required
+                      style={{width:'70px'}}
+                    />
+                  </div>
+                  <div>
+                    <label style={{fontSize:'0.95em'}}>Prix unitaire (FCFA)</label>
+                    <input
+                      type="number"
+                      min="1"
+                      step="0.01"
+                      value={details.price !== undefined ? details.price : prod?.price || 0}
+                      onChange={handleProductDetailChange(id, "price")}
+                      required
+                      style={{width:'110px'}}
+                    />
+                  </div>
+                  <div style={{marginLeft:'16px',fontWeight:'bold',color:'#228b22',alignSelf:'center'}}>
+                    {(details.quantity && details.price) ? (details.quantity * details.price).toLocaleString() + ' FCFA' : ''}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
 
           {/* Total */}
           <div className="form-group">
-            <label htmlFor="total">Total (FCFA)</label>
-            <input id="total" type="text" value={totalAmount.toLocaleString()} readOnly />
+            <label htmlFor="total" style={{fontWeight:'bold'}}>Total (FCFA)</label>
+            <input id="total" type="text" value={totalAmount ? totalAmount.toLocaleString() : '0'} readOnly style={{fontWeight:'bold',color:'#228b22',background:'#f3fff3'}} />
           </div>
 
           {/* Client */}
@@ -228,19 +259,22 @@ const SalesForm = ({ products = [], onSave, onCancel }) => {
           {/* Résumé */}
           <div className="sale-summary">
             <h3>Résumé de la vente</h3>
-            <p>
-              <strong>Produit :</strong>{" "}
-              {selectedProduct ? selectedProduct.name : "-"}
-            </p>
-            <p>
-              <strong>Quantité :</strong> {saleData.quantity || "-"}
-            </p>
+            <ul>
+              {saleData.product_ids.map(id => {
+                const prod = products.find(p => String(p.id) === String(id));
+                const details = saleData.productsDetails[id] || {};
+                return (
+                  <li key={id}>
+                    <strong>{prod?.name || id}</strong> : {details.quantity || 1} × {details.price || 0} FCFA = {(details.quantity * details.price).toLocaleString()} FCFA
+                  </li>
+                );
+              })}
+            </ul>
             <p>
               <strong>Total :</strong> {totalAmount.toLocaleString()} FCFA
             </p>
             <p>
-              <strong>Client :</strong>{" "}
-              {saleData.client ? saleData.client : "-"}
+              <strong>Client :</strong> {saleData.client ? saleData.client : "-"}
             </p>
           </div>
 

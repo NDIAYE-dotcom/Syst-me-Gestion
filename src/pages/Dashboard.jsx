@@ -1,5 +1,6 @@
 // pages/Dashboard.jsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
+import { SalesRefreshContext } from '../context/SalesRefreshContext';
 import { supabase } from '../supabaseClient';
 import DailySales from '../components/Charts/DailySales';
 import PaymentStatus from '../components/Charts/PaymentStatus';
@@ -7,12 +8,14 @@ import SalesEvolution from '../components/Charts/SalesEvolution';
 import '../styles/dashboard.css';
 
 const Dashboard = () => {
+
   const [salesData, setSalesData] = useState([]);
   const [timeRange, setTimeRange] = useState('daily');
+  const { refresh } = useContext(SalesRefreshContext);
 
   useEffect(() => {
     fetchSalesData();
-  }, [timeRange]);
+  }, [timeRange, refresh]);
 
   const fetchSalesData = async () => {
     const { data, error } = await supabase
