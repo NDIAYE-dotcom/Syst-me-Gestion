@@ -40,11 +40,8 @@ const Login = () => {
 
   useEffect(() => {
     // Vérifier si on a une session active au chargement
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) {
-        window.location.reload();
-      }
-    });
+    // Si la session existe, on laisse l'app rediriger via App.jsx
+    // Ne pas recharger la page ici pour éviter le loop infini
   }, []);
 
   const handleSubmit = async (e) => {

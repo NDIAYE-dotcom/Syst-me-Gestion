@@ -11,11 +11,11 @@ const Sidebar = ({ currentPage, setCurrentPage }) => {
   ];
 
   const handleLogout = async () => {
-    // Déconnexion Supabase et redirection vers Login
+    // Déconnexion Supabase et rechargement de l'application
     try {
       const { error } = await import('../supabaseClient').then(mod => mod.supabase.auth.signOut());
       if (error) throw error;
-      window.location.href = '/login';
+      window.location.reload();
     } catch (err) {
       alert('Erreur déconnexion: ' + (err.message || err));
     }
