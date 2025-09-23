@@ -1,7 +1,7 @@
-// pages/Login.jsx
+// pages/Login.jsx 1
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
-import '../styles/Login.css';
+import '../styles/login.css';
 
 const Login = () => {
   const handleResetPassword = async () => {
