@@ -26,7 +26,8 @@ const Sidebar = ({ currentPage, setCurrentPage }) => {
 
   // Affichage du bouton menu sur mobile
   return (
-    <>
+    <div className="sidebar-wrapper">
+      {/* Sidebar desktop */}
       <div className="sidebar desktop-sidebar">
         <div className="logo">
           <h2 style={{ color: '#fff', fontWeight: 700, fontSize: '1.3rem', letterSpacing: '1px', margin: 0, textAlign: 'center' }}>
@@ -64,48 +65,6 @@ const Sidebar = ({ currentPage, setCurrentPage }) => {
         </nav>
         <button className="logout-btn" onClick={handleLogout}>
           <span className="icon">🚪</span>
-          {showMobileMenu && (
-            <div className="mobile-menu-overlay" onClick={() => setShowMobileMenu(false)}>
-              <div className="mobile-menu-panel" onClick={e => e.stopPropagation()}>
-                <div className="mobile-menu-header">
-                  <span style={{fontWeight:700,fontSize:'1.1rem'}}>Menu</span>
-                  <button className="close-mobile-menu" onClick={() => setShowMobileMenu(false)}>✕</button>
-                </div>
-                <div className="mobile-menu-list">
-                  {menuItems.map(item => (
-                    item.id !== 'inventory' ? (
-                      <button
-                        key={item.id}
-                        className={`menu-item ${currentPage === item.id ? 'active' : ''}`}
-                        onClick={() => {setCurrentPage(item.id); setShowMobileMenu(false);}}
-                      >
-                        <span className="icon">{item.icon}</span>
-                        <span className="label">{item.label}</span>
-                      </button>
-                    ) : (
-                      <React.Fragment key={item.id}>
-                        <button
-                          className={`menu-item ${currentPage.startsWith('inventory') ? 'active' : ''}`}
-                          onClick={() => setShowInventoryOptions(v => !v)}
-                          style={{width:'100%'}}
-                        >
-                          <span className="icon">{item.icon}</span>
-                          <span className="label">Inventaire</span>
-                        </button>
-                        {showInventoryOptions && (
-                          <div style={{marginLeft:'20px',marginTop:'4px',display:'flex',flexDirection:'column',gap:'4px'}}>
-                            <button className="menu-item" onClick={() => {setCurrentPage('inventory-3mois'); setShowInventoryOptions(false); setShowMobileMenu(false);}}>3 mois</button>
-                            <button className="menu-item" onClick={() => {setCurrentPage('inventory-6mois'); setShowInventoryOptions(false); setShowMobileMenu(false);}}>6 mois</button>
-                            <button className="menu-item" onClick={() => {setCurrentPage('inventory-annuel'); setShowInventoryOptions(false); setShowMobileMenu(false);}}>Annuel</button>
-                          </div>
-                        )}
-                      </React.Fragment>
-                    )
-                  ))}
-                </div>
-              </div>
-            </div>
-          )}
           <span className="label">Déconnexion</span>
         </button>
       </div>
@@ -113,6 +72,7 @@ const Sidebar = ({ currentPage, setCurrentPage }) => {
       <button className="mobile-menu-btn" onClick={() => setShowMobileMenu(true)} aria-label="Ouvrir le menu">
         <span className="menu-icon">☰</span>
       </button>
+      {/* Mobile menu overlay */}
       {showMobileMenu && (
         <div className="mobile-menu-overlay" onClick={() => setShowMobileMenu(false)}>
           <div className="mobile-menu-panel" onClick={e => e.stopPropagation()}>
@@ -159,7 +119,7 @@ const Sidebar = ({ currentPage, setCurrentPage }) => {
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 };
 

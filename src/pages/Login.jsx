@@ -1,7 +1,7 @@
 // pages/Login.jsx
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
-import '../styles/login.css';
+import '../styles/Login.css';
 
 const Login = () => {
   const handleResetPassword = async () => {
@@ -96,7 +96,7 @@ const Login = () => {
     <div className="login-container">
       <div className="login-card glass-effect animate-fade-in">
         <div className="login-header">
-          <img src="/logo-SOGEPI.png" alt="Logo SOGEPI" className="login-logo" style={{maxWidth:'80px',marginBottom:'10px'}} />
+              <img src="/logo-SOGEPI.png" alt="Logo SOGEPI" className="login-logo" style={{marginBottom: '12px'}} />
           <h1 style={{display:'flex',alignItems:'center',justifyContent:'center',gap:'8px'}}>
             <span style={{fontWeight:800,letterSpacing:'1px'}}>SOGEPI Afrique S.A.R.L.</span>
             <span style={{fontSize:'1.5rem',color:'#228b22'}}>🌱</span>
