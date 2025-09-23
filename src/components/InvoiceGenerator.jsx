@@ -11,6 +11,7 @@ const InvoiceGenerator = ({ onClose, onCreated }) => {
     client: '',
     payment_method: 'cash',
     status: 'unpaid',
+    noTaxInfo: false,
   });
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -108,6 +109,7 @@ const InvoiceGenerator = ({ onClose, onCreated }) => {
         payment_method: form.payment_method,
         status: form.status,
         total: totalAmount,
+        notaxinfo: form.noTaxInfo,
       };
       const { error: dbError } = await supabase
         .from('sales')
@@ -217,6 +219,8 @@ const InvoiceGenerator = ({ onClose, onCreated }) => {
               onChange={e => setForm(prev => ({ ...prev, client: e.target.value }))}
               required
             />
+          </div>
+          <div className="form-group" style={{background:'#e3f2fd',border:'2px solid #228b22',borderRadius:'8px',padding:'12px',margin:'16px 0'}}>
           </div>
           <div className="form-group">
             <label htmlFor="payment">Mode de paiement</label>

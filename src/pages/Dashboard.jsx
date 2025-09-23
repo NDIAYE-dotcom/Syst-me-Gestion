@@ -41,6 +41,11 @@ const Dashboard = () => {
       // Dernier jour du mois
       const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
       endUTC = new Date(Date.UTC(lastDay.getFullYear(), lastDay.getMonth(), lastDay.getDate(), 23, 59, 59)).toISOString();
+    } else if (timeRange === 'annual') {
+      // Premier jour de l'année
+      startUTC = new Date(Date.UTC(now.getFullYear(), 0, 1, 0, 0, 0)).toISOString();
+      // Dernier jour de l'année
+      endUTC = new Date(Date.UTC(now.getFullYear(), 11, 31, 23, 59, 59)).toISOString();
     }
     // Charger uniquement les ventes de la période et les colonnes utiles
     const { data, error } = await supabase
@@ -56,41 +61,40 @@ const Dashboard = () => {
   const calculateTotals = () => {
     const now = new Date();
     let dailyTotal = 0, paidInvoices = 0, unpaidInvoices = 0, proformaInvoices = 0, dailyCount = 0;
-    salesData.forEach(sale => {
+  salesData.filter(sale => !sale.ischetak).forEach(sale => {
       const saleDate = new Date(sale.created_at);
       // Comptabiliser uniquement les ventes payées (statut 'paid')
       if (sale.status === 'paid') {
-        // Ventes du jour
-        if (
-          timeRange === 'daily' &&
-          saleDate.getDate() === now.getDate() &&
-          saleDate.getMonth() === now.getMonth() &&
-          saleDate.getFullYear() === now.getFullYear()
-        ) {
-          if (Number(sale.quantity) > 0 && Number(sale.price) > 0) {
-            dailyTotal += Number(sale.quantity) * Number(sale.price);
-          } else if (Number(sale.total) > 0) {
+        if (timeRange === 'daily') {
+          if (
+            saleDate.getDate() === now.getDate() &&
+            saleDate.getMonth() === now.getMonth() &&
+            saleDate.getFullYear() === now.getFullYear()
+          ) {
+            if (Number(sale.quantity) > 0 && Number(sale.price) > 0) {
+              dailyTotal += Number(sale.quantity) * Number(sale.price);
+            } else if (Number(sale.total) > 0) {
+              dailyTotal += Number(sale.total);
+            }
+            dailyCount++;
+          }
+        } else if (timeRange === 'monthly') {
+          if (
+            saleDate.getMonth() === now.getMonth() &&
+            saleDate.getFullYear() === now.getFullYear()
+          ) {
             dailyTotal += Number(sale.total);
           }
-          dailyCount++;
-        }
-        // Ventes du mois
-        if (
-          timeRange === 'monthly' &&
-          saleDate.getMonth() === now.getMonth() &&
-          saleDate.getFullYear() === now.getFullYear()
-        ) {
-          dailyTotal += Number(sale.total);
-        }
-        // Ventes de la semaine
-        if (
-          timeRange === 'weekly'
-        ) {
+        } else if (timeRange === 'weekly') {
           const firstDayOfWeek = new Date(now);
           firstDayOfWeek.setDate(now.getDate() - now.getDay());
           const lastDayOfWeek = new Date(firstDayOfWeek);
           lastDayOfWeek.setDate(firstDayOfWeek.getDate() + 6);
           if (saleDate >= firstDayOfWeek && saleDate <= lastDayOfWeek) {
+            dailyTotal += Number(sale.total);
+          }
+        } else if (timeRange === 'annual') {
+          if (saleDate.getFullYear() === now.getFullYear()) {
             dailyTotal += Number(sale.total);
           }
         }
@@ -114,12 +118,13 @@ const Dashboard = () => {
   // DEBUG : Filtrer et afficher les ventes du jour
   const now = new Date();
   const ventesDuJour = salesData.filter(sale => {
-    // Gestion UTC vs local
-    const saleDate = new Date(sale.created_at);
-    // Convertir la date locale du jour en UTC min/max
-    const startOfDayUTC = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0));
-    const endOfDayUTC = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59));
-    return saleDate >= startOfDayUTC && saleDate <= endOfDayUTC;
+  // Gestion UTC vs local
+  if (sale.ischetak) return false;
+  const saleDate = new Date(sale.created_at);
+  // Convertir la date locale du jour en UTC min/max
+  const startOfDayUTC = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0));
+  const endOfDayUTC = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59));
+  return saleDate >= startOfDayUTC && saleDate <= endOfDayUTC;
   });
 
   return (
@@ -144,6 +149,12 @@ const Dashboard = () => {
           onClick={() => setTimeRange('monthly')}
         >
           Mensuel
+        </button>
+        <button 
+          className={timeRange === 'annual' ? 'active' : ''} 
+          onClick={() => setTimeRange('annual')}
+        >
+          Annuel
         </button>
       </div>
 

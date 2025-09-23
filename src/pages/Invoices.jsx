@@ -92,7 +92,10 @@ const Invoices = () => {
         <div style={{position:'fixed',top:0,left:0,right:0,bottom:0,zIndex:2000,background:'rgba(0,0,0,0.6)',display:'flex',alignItems:'center',justifyContent:'center'}}>
           <div style={{background:'#fff',borderRadius:'12px',padding:'24px',maxWidth:'850px',width:'100%',boxShadow:'0 2px 24px rgba(0,0,0,0.18)',position:'relative'}}>
             <button className="invoice-close-btn" onClick={()=>setSelectedSale(null)}>&times;</button>
-            <Invoice sale={selectedSale} logo={logoSogepiBase64} />
+            <Invoice 
+              sale={selectedSale} 
+              logo={selectedSale.ischetak === true || selectedSale.ischetak === 'true' ? '/LogoChetak-01.png' : logoSogepiBase64} 
+            />
             {(selectedSale.status === 'unpaid' || selectedSale.status === 'proforma') && (
               <button className="btn-primary" style={{marginTop:'18px'}} onClick={()=>handleUpdateStatus(selectedSale, 'paid')}>
                 Marquer comme Payée

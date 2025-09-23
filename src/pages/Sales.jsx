@@ -9,6 +9,7 @@ const Sales = () => {
   const [sales, setSales] = useState([]);
   const [products, setProducts] = useState([]);
   const [showForm, setShowForm] = useState(false);
+  const [showChetakForm, setShowChetakForm] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -43,6 +44,10 @@ const Sales = () => {
     setShowForm(true);
   };
 
+  const handleNewChetak = () => {
+    setShowChetakForm(true);
+  };
+
   const handleSaveSale = async (saleData) => {
     // Harmonisation du format d'enregistrement
     const payload = {
@@ -56,6 +61,7 @@ const Sales = () => {
           : (Number(saleData.quantity) * Number(saleData.price))
       ),
       created_at: new Date(),
+      ischetak: saleData.isChetak || false,
     };
     const { error } = await supabase
       .from('sales')
@@ -64,6 +70,7 @@ const Sales = () => {
       setError("Erreur enregistrement vente : " + error.message);
     } else {
       setShowForm(false);
+      setShowChetakForm(false);
       fetchSales();
     }
   };
@@ -72,9 +79,12 @@ const Sales = () => {
     <div className="page">
       <div className="page-header">
         <h1>Gestion des Ventes</h1>
-        <button className="btn-primary" onClick={handleNewSale}>
-          Nouvelle Vente
-        </button>
+        <div style={{display:'flex',gap:'12px'}}>
+          <button className="btn-primary" onClick={handleNewSale}>
+            Nouvelle Vente
+          </button>
+          <button className="btn-secondary" style={{background:'#1976d2',color:'#fff',fontWeight:'bold'}} onClick={handleNewChetak}>Facture Chetak</button>
+        </div>
       </div>
 
       {error && (
@@ -86,6 +96,13 @@ const Sales = () => {
           products={products} 
           onSave={handleSaveSale} 
           onCancel={() => setShowForm(false)} 
+        />
+      )}
+      {showChetakForm && (
+        <SalesForm 
+          products={products} 
+          onSave={data => handleSaveSale({...data, isChetak: true})} 
+          onCancel={() => setShowChetakForm(false)} 
         />
       )}
 

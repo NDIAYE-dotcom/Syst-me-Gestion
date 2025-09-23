@@ -1,3 +1,116 @@
+/* Bouton menu mobile */
+/* Bouton menu mobile compact, ne masque pas le logo */
+/* Bouton menu mobile pro, rond, bien positionné */
+.mobile-menu-btn {
+  display: none;
+  position: fixed;
+  top: 18px;
+  left: 18px;
+  z-index: 2001;
+  background: linear-gradient(120deg, #43cea2 0%, #1976d2 100%);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  font-size: 1.7rem;
+  box-shadow: 0 2px 12px rgba(25,118,210,0.13);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+.mobile-menu-btn .menu-icon {
+  font-size: 1.7rem;
+  margin: 0;
+}
+.mobile-menu-btn:active {
+  background: #1976d2;
+}
+
+.mobile-menu-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(25, 118, 210, 0.18);
+  z-index: 2000;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+.mobile-menu-panel {
+  background: #fff;
+  border-radius: 18px;
+  margin-top: 40px;
+  width: 90vw;
+  max-width: 340px;
+  box-shadow: 0 8px 32px rgba(25,118,210,0.18);
+  padding: 18px 12px 12px 12px;
+  animation: fade-in 0.3s cubic-bezier(.4,0,.2,1);
+}
+.mobile-menu-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.close-mobile-menu {
+  background: none;
+  border: none;
+  font-size: 1.3rem;
+  color: #1976d2;
+  cursor: pointer;
+  font-weight: 700;
+}
+.mobile-menu-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.mobile-menu-list .menu-item {
+  background: none;
+  border: none;
+  padding: 12px 10px;
+  font-size: 1.05rem;
+  color: #1976d2;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 500;
+  transition: background 0.2s, color 0.2s;
+}
+.mobile-menu-list .menu-item.active {
+  background: linear-gradient(90deg, #1976d2 0%, #43cea2 100%);
+  color: #fff;
+  font-weight: 700;
+}
+.mobile-menu-list .menu-item:hover {
+  background: #e3f2fd;
+  color: #1976d2;
+}
+.mobile-menu-list .icon {
+  font-size: 1.3rem;
+}
+.mobile-menu-list .logout-btn {
+  color: #d32f2f;
+  font-weight: 700;
+  border-top: 1px solid #eee;
+  margin-top: 10px;
+}
+
+@media (max-width: 900px) {
+  .desktop-sidebar {
+    display: none !important;
+  }
+  .mobile-menu-btn {
+    display: block;
+  }
+}
 @media (max-width: 900px) {
   .sidebar {
     width: 100vw;

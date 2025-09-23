@@ -1,3 +1,147 @@
+@media (max-width: 600px) {
+  .inventory-container {
+    padding: 8px 2px !important;
+  }
+  .inventory-header {
+    padding: 10px 6px !important;
+    border-radius: 10px !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 8px !important;
+  }
+  .inventory-title {
+    font-size: 1.1rem !important;
+    flex-direction: row !important;
+    gap: 6px !important;
+    align-items: center !important;
+  }
+  .inventory-stats-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+    width: 100% !important;
+  }
+  .stat-card {
+    padding: 10px 6px !important;
+    border-radius: 8px !important;
+    min-width: 0 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  .stat-main-value {
+    font-size: 1.1rem !important;
+    flex-direction: row !important;
+    gap: 4px !important;
+    align-items: center !important;
+  }
+  .stat-label-main {
+    font-size: 0.98rem !important;
+  }
+  .stat-value-main-horizontal-only {
+    font-size: 1.1rem !important;
+    font-weight: 700 !important;
+    white-space: nowrap !important;
+  }
+  .fcfa-main {
+    font-size: 0.95rem !important;
+    font-weight: 600 !important;
+    background: #43cea2 !important;
+    color: #fff !important;
+    border-radius: 6px !important;
+    padding: 2px 6px !important;
+    margin-left: 4px !important;
+  }
+  .inventory-list {
+    padding: 8px 2px !important;
+    border-radius: 10px !important;
+  }
+  .sales-list-grid {
+    grid-template-columns: 1fr !important;
+    gap: 8px !important;
+  }
+  .sale-card {
+    padding: 8px 4px !important;
+    border-radius: 8px !important;
+    min-width: 0 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+}
+/* Bouton Menu responsive pour mobile */
+@media (max-width: 600px) {
+  .menu-toggle-btn {
+    position: fixed;
+    top: 16px;
+    left: 16px;
+    z-index: 2001;
+    background: linear-gradient(90deg, #1976d2 0%, #43cea2 100%);
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    font-size: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(25,118,210,0.18);
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .menu-toggle-btn:active,
+  .menu-toggle-btn:focus {
+    background: #1565c0;
+    outline: none;
+  }
+}
+/* --- Correctif responsive pour le bouton Facture Chetak --- */
+@media (max-width: 600px) {
+  .btn-primary, .facture-chetak-btn {
+    font-size: 1rem !important;
+    padding: 10px 16px !important;
+    min-width: 120px !important;
+    max-width: 90vw !important;
+    margin: 0 0 8px 0 !important;
+    display: inline-block !important;
+    text-align: center !important;
+    white-space: normal !important;
+    line-height: 1.2 !important;
+    box-sizing: border-box !important;
+  }
+  .btn-secondary {
+    font-size: 1rem !important;
+    padding: 10px 16px !important;
+    min-width: 120px !important;
+    max-width: 90vw !important;
+    margin: 0 0 8px 0 !important;
+    display: inline-block !important;
+    text-align: center !important;
+    white-space: normal !important;
+    line-height: 1.2 !important;
+    box-sizing: border-box !important;
+  }
+  .page-header > div {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+    align-items: stretch;
+  }
+  .btn-primary, .btn-secondary {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100vw !important;
+    font-size: 1.1rem !important;
+    padding: 12px 0 !important;
+    margin: 0 !important;
+    border-radius: 10px !important;
+    box-sizing: border-box !important;
+    text-align: center !important;
+    white-space: normal !important;
+    line-height: 1.2 !important;
+    font-weight: bold !important;
+  }
+}
 .theme-dark .invoice-product-label,
 .theme-dark .form-group label {
   color: #111 !important;
@@ -890,3 +1034,5 @@ body {
 .invoice-close-btn:hover {
   background: #1976d2;
 }
+
+

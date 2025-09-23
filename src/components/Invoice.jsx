@@ -9,9 +9,12 @@ function formatFCFA(n) {
 }
 
 const Invoice = ({ sale, logo }) => {
+  // Logo Chetak si facture Chetak
+  const chetakLogo = '/LogoChetak-01.png';
+  const isChetak = sale.ischetak === true || sale.ischetak === 'true';
   const invoiceRef = useRef();
 
-  const tvaRate = 0.18;
+  const tvaRate = sale.notaxinfo ? 0 : 0.18;
   // Gère les deux formats de vente
   let products = [];
   let total = 0;
@@ -27,8 +30,8 @@ const Invoice = ({ sale, logo }) => {
     }];
     total = Number(sale.total) || (Number(sale.quantity) * Number(sale.price)) || 0;
   }
-  const tvaAmount = Math.round(total * tvaRate);
-  const netToPay = total + tvaAmount;
+  const tvaAmountFinal = (sale.notaxinfo || isChetak) ? 0 : Math.round(total * 0.18);
+  const netToPay = (sale.notaxinfo || isChetak) ? total : total + tvaAmountFinal;
 
   const handlePrint = () => {
     window.print();
@@ -41,25 +44,29 @@ const Invoice = ({ sale, logo }) => {
       const pageWidth = doc.internal.pageSize.getWidth();
       const marginX = 32;
       const headerY = 32;
-  // Nouvelle entête identique au web
-  const headerHeight = 60;
-  // Logo petit à gauche
-  const logoHeight = 36;
-  const logoWidth = 36;
-  const logoX = marginX;
-  const logoY = headerY;
-  if (logo && typeof logo === 'string') {
-    try {
-      const base64Data = logo.startsWith('data:image/png;base64,')
-        ? logo.replace('data:image/png;base64,', '')
-        : logo;
-      doc.addImage(base64Data, 'PNG', logoX, logoY, logoWidth, logoHeight, undefined, 'BASE64');
-    } catch (e) {
-      doc.setFontSize(10);
-      doc.setTextColor(255,0,0);
-      doc.text('Erreur logo: ' + (e?.message || String(e)), logoX, logoY + 20);
-    }
-  }
+      const headerHeight = 60;
+      const logoHeight = 36;
+      const logoWidth = 36;
+      const logoX = marginX;
+      const logoY = headerY;
+      // Logo Chetak ou SOGEPI
+      let logoToUse = logo;
+      if (isChetak) {
+        logoToUse = chetakLogo;
+      }
+      if (logoToUse && typeof logoToUse === 'string') {
+        try {
+          if (logoToUse.startsWith('data:image/png;base64,')) {
+            doc.addImage(logoToUse.replace('data:image/png;base64,', ''), 'PNG', logoX, logoY, logoWidth, logoHeight, undefined, 'BASE64');
+          } else {
+            doc.addImage(logoToUse, 'PNG', logoX, logoY, logoWidth, logoHeight);
+          }
+        } catch (e) {
+          doc.setFontSize(10);
+          doc.setTextColor(255,0,0);
+          doc.text('Erreur logo: ' + (e?.message || String(e)), logoX, logoY + 20);
+        }
+      }
   // Blocs infos harmonisés côte à côte, fond bleu compact
   const blockY = logoY + logoHeight + 8;
   const blockFontSize = 12;
@@ -139,48 +146,56 @@ const Invoice = ({ sale, logo }) => {
         },
         alternateRowStyles: { fillColor: [245,250,255] }
       });
-  // Ajout de la phrase après le tableau produits
-  doc.setFontSize(14);
-  doc.setTextColor(34,139,34);
-  doc.text(`Arrêté la présente facture à la somme de : ${formatFCFA(total)}`, marginX, doc.lastAutoTable.finalY + 12);
-
-      autoTable(doc, {
-        startY: doc.lastAutoTable.finalY + 22,
-        head: [['Total TCC', 'TVA 18%', 'NET À PAYER']],
-        body: [[
-          formatFCFA(total),
-          formatFCFA(tvaAmount),
-          formatFCFA(netToPay)
-        ]],
-        theme: 'grid',
-        headStyles: {
-          fillColor: [227,240,255],
-          textColor: [34,139,34],
-          fontSize: 16,
-          halign: 'center',
-          fontStyle: 'bold',
-          lineWidth: 0.5,
-          lineColor: [180,200,220]
-        },
-        styles: {
-          fontSize: 14,
-          halign: 'center',
-          textColor: [30,30,30],
-          cellPadding: 3,
-          lineWidth: 0.3,
-          lineColor: [220,220,220]
-        },
-        alternateRowStyles: { fillColor: [245,250,255] }
-      });
-  doc.setFontSize(12);
-  doc.setTextColor(0,0,0);
-  doc.text(`Mode de règlement : ${sale.payment_method || ''}`, marginX, doc.lastAutoTable.finalY + 18);
-  // Footer moderne centré et gris
-  doc.setFontSize(10);
-  doc.setTextColor(120,120,120);
+      // Ajout de la phrase après le tableau produits
+      doc.setFontSize(14);
+      doc.setTextColor(34,139,34);
+      doc.text(`Arrêté la présente facture à la somme de : ${formatFCFA(total)}`, marginX, doc.lastAutoTable.finalY + 12);
+      if (!(sale.notaxinfo || isChetak)) {
+        autoTable(doc, {
+          startY: doc.lastAutoTable.finalY + 22,
+          head: [['Total TCC', 'TVA 18%', 'NET À PAYER']],
+          body: [[
+            formatFCFA(total),
+            formatFCFA(tvaAmountFinal),
+            formatFCFA(netToPay)
+          ]],
+          theme: 'grid',
+          headStyles: {
+            fillColor: [227,240,255],
+            textColor: [34,139,34],
+            fontSize: 16,
+            halign: 'center',
+            fontStyle: 'bold',
+            lineWidth: 0.5,
+            lineColor: [180,200,220]
+          },
+          styles: {
+            fontSize: 14,
+            halign: 'center',
+            textColor: [30,30,30],
+            cellPadding: 3,
+            lineWidth: 0.3,
+            lineColor: [220,220,220]
+          },
+          alternateRowStyles: { fillColor: [245,250,255] }
+        });
+      }
+      doc.setFontSize(12);
+      doc.setTextColor(0,0,0);
+      doc.text(`Mode de règlement : ${sale.payment_method || ''}`, marginX, doc.lastAutoTable.finalY + 18);
+      // Footer moderne centré et gris
+      doc.setFontSize(10);
+      doc.setTextColor(120,120,120);
+      if (isChetak) {
   doc.text('+221 77 606 29 00 - 77 512 30 76', pageWidth/2, 275, {align:'center'});
   doc.text('RUE TOLBIAC N°12 - DAKAR SENEGAL', pageWidth/2, 281, {align:'center'});
-  doc.text('RCCM: SN.DKR.2022.B.18980 / NINEA : 009454258', pageWidth/2, 287, {align:'center'});
+      } else {
+        doc.text('+221 77 606 29 00 - 77 512 30 76', pageWidth/2, 275, {align:'center'});
+        doc.text('RUE TOLBIAC N°12 - DAKAR SENEGAL', pageWidth/2, 281, {align:'center'});
+        if (!sale.notaxinfo) {
+          doc.text('RCCM: SN.DKR.2022.B.18980 / NINEA : 009454258', pageWidth/2, 287, {align:'center'});
+        }
+      }
       doc.save(`Facture_${sale.client}_${sale.id}.pdf`);
     } catch (err) {
       alert('Erreur génération PDF : ' + err.message);
@@ -190,7 +205,7 @@ const Invoice = ({ sale, logo }) => {
   return (
     <div className="invoice-a4" ref={invoiceRef} style={{background:'#fff',color:'#222',padding:'32px',maxWidth:'800px',margin:'0 auto',boxShadow:'0 2px 12px rgba(0,0,0,0.12)'}}>
       <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:'24px'}}>
-        <img src={logo} alt="Logo SOGEPI" style={{height:'60px'}} />
+        <img src={isChetak ? chetakLogo : logo} alt={isChetak ? 'Logo Chetak' : 'Logo SOGEPI'} style={{height:'60px'}} />
         <h1 style={{fontSize:'2rem',color:'#228b22',background:'#e3f2fd',padding:'8px 24px',borderRadius:'8px'}}>FACTURE</h1>
       </div>
       <div style={{display:'flex',justifyContent:'space-between',marginBottom:'18px'}}>
@@ -229,29 +244,39 @@ const Invoice = ({ sale, logo }) => {
       <div style={{marginBottom:'18px'}}>
         Arrêté la présente facture à la somme de : <span style={{color:'#228b22',fontWeight:'bold'}}>{formatFCFA(total)}</span>
       </div>
-      <table style={{width:'100%',borderCollapse:'collapse',marginBottom:'18px'}}>
-        <thead>
-          <tr style={{background:'#e3f2fd',color:'#228b22'}}>
-            <th style={{padding:'8px',border:'1px solid #ddd'}}>Total TCC</th>
-            <th style={{padding:'8px',border:'1px solid #ddd'}}>TVA 18%</th>
-            <th style={{padding:'8px',border:'1px solid #ddd'}}>NET À PAYER</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td style={{padding:'8px',border:'1px solid #ddd',fontWeight:'bold'}}>{formatFCFA(total)}</td>
-            <td style={{padding:'8px',border:'1px solid #ddd',fontWeight:'bold'}}>{formatFCFA(tvaAmount)}</td>
-            <td style={{padding:'8px',border:'1px solid #ddd',fontWeight:'bold'}}>{formatFCFA(netToPay)}</td>
-          </tr>
-        </tbody>
-      </table>
+      {!(sale.notaxinfo || isChetak) ? (
+        <table style={{width:'100%',borderCollapse:'collapse',marginBottom:'18px'}}>
+          <thead>
+            <tr style={{background:'#e3f2fd',color:'#228b22'}}>
+              <th style={{padding:'8px',border:'1px solid #ddd'}}>Total TCC</th>
+              <th style={{padding:'8px',border:'1px solid #ddd'}}>TVA 18%</th>
+              <th style={{padding:'8px',border:'1px solid #ddd'}}>NET À PAYER</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style={{padding:'8px',border:'1px solid #ddd',fontWeight:'bold'}}>{formatFCFA(total)}</td>
+              <td style={{padding:'8px',border:'1px solid #ddd',fontWeight:'bold'}}>{formatFCFA(tvaAmountFinal)}</td>
+              <td style={{padding:'8px',border:'1px solid #ddd',fontWeight:'bold'}}>{formatFCFA(netToPay)}</td>
+            </tr>
+          </tbody>
+        </table>
+      ) : null}
       <div style={{marginBottom:'18px'}}>
         <strong>Mode de règlement :</strong> {sale.payment_method}
       </div>
       <div style={{marginTop:'32px',fontSize:'0.95em',color:'#228b22',textAlign:'center'}}>
-        +221 77 606 29 00 - 77 512 30 76<br/>
-        RUE TOLBIAC N°12 - DAKAR SENEGAL<br/>
-        RCCM: SN.DKR.2022.B.18980 / NINEA : 009454258
+        {isChetak ? (
+          <>Chetak Senegal<br/>www.chetak-senegal.com<br/></>
+        ) : (
+          <>
+            +221 77 606 29 00 - 77 512 30 76<br/>
+            RUE TOLBIAC N°12 - DAKAR SENEGAL<br/>
+            {!sale.notaxinfo && (
+              <>RCCM: SN.DKR.2022.B.18980 / NINEA : 009454258<br/></>
+            )}
+          </>
+        )}
       </div>
       <div style={{marginTop:'32px',display:'flex',gap:'16px',justifyContent:'center'}}>
         <button className="btn-primary" onClick={handlePrint}>Imprimer</button>

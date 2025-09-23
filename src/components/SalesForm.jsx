@@ -8,6 +8,7 @@ const SalesForm = ({ products = [], onSave, onCancel }) => {
     client: "",
     payment_method: "cash",
     status: "unpaid", // unpaid, paid, proforma
+    noTaxInfo: false,
   });
 
   const [submitting, setSubmitting] = useState(false);
@@ -122,6 +123,7 @@ const SalesForm = ({ products = [], onSave, onCancel }) => {
           };
         }),
         total: totalAmount,
+        notaxinfo: saleData.noTaxInfo,
       };
 
       // Supporte onSave sync ou async

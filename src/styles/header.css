@@ -1,3 +1,14 @@
+/* Taille réduite du logo dans le header */
+.header-logo {
+  width: 80px;
+  height: 80px;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(25,118,210,0.10);
+ 
+  object-fit: contain;
+  margin-right: 0.5rem;
+  margin-left: 0.2rem;
+}
 /* header.css - Moderne et attractif */
 
 .header {

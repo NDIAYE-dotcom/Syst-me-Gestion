@@ -40,8 +40,11 @@ const Login = () => {
 
   useEffect(() => {
     // Vérifier si on a une session active au chargement
-    // Si la session existe, on laisse l'app rediriger via App.jsx
-    // Ne pas recharger la page ici pour éviter le loop infini
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        window.location.reload();
+      }
+    });
   }, []);
 
   const handleSubmit = async (e) => {
@@ -93,7 +96,7 @@ const Login = () => {
     <div className="login-container">
       <div className="login-card glass-effect animate-fade-in">
         <div className="login-header">
-          <img src="/logo.png" alt="SOGEPI Afrique S.A.R.L." className="login-logo" />
+          <img src="/logo-SOGEPI.png" alt="Logo SOGEPI" className="login-logo" style={{maxWidth:'80px',marginBottom:'10px'}} />
           <h1 style={{display:'flex',alignItems:'center',justifyContent:'center',gap:'8px'}}>
             <span style={{fontWeight:800,letterSpacing:'1px'}}>SOGEPI Afrique S.A.R.L.</span>
             <span style={{fontSize:'1.5rem',color:'#228b22'}}>🌱</span>

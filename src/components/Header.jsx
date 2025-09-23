@@ -21,6 +21,8 @@ const Header = () => {
   const [showNotifications, setShowNotifications] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [salesToday, setSalesToday] = useState(0);
+  const [paidToday, setPaidToday] = useState(0);
+  const [showPayModal, setShowPayModal] = useState(false);
 
   useEffect(() => {
     // Récupérer l'utilisateur connecté
@@ -54,13 +56,15 @@ const Header = () => {
     tomorrow.setDate(today.getDate() + 1);
     const { data, error } = await supabase
       .from('sales')
-      .select('id,created_at')
+      .select('id,created_at,status')
       .gte('created_at', today.toISOString())
       .lt('created_at', tomorrow.toISOString());
     if (!error && Array.isArray(data)) {
       setSalesToday(data.length);
+      setPaidToday(data.filter(sale => sale.status === 'paid').length);
     } else {
       setSalesToday(0);
+      setPaidToday(0);
     }
   };
 
@@ -140,7 +144,7 @@ const Header = () => {
   return (
     <header className="header">
       <div className="header-left" style={{ display: 'flex', alignItems: 'center', gap: '18px' }}>
-        <img src={logoSogepi} alt="Logo SOGEPI" style={{ height: '80px', width: 'auto', borderRadius: '14px', boxShadow: '0 4px 16px rgba(25,118,210,0.18)' }} />
+        <img src={logoSogepi} alt="Logo SOGEPI" className="header-logo" />
         <div className="greeting">
           <h1>{getGreeting()} 👋</h1>
           <p className="current-date">
@@ -149,30 +153,19 @@ const Header = () => {
         </div>
       </div>
 
-  <div className="header-right">
+      <div className="header-right">
         <button onClick={toggleTheme} className="theme-toggle-btn">
           {theme === 'dark' ? '☀️' : '🌙'}
         </button>
-        {/* Indicateurs rapides */}
         <div className="quick-stats">
           <div className="stat-item">
-            <span className="stat-icon">💰</span>
+            <span className="stat-icon" style={{cursor: 'pointer'}} onClick={() => setShowPayModal(true)}>✅</span>
             <div className="stat-info">
-              <span className="stat-value">{salesToday}</span>
-              <span className="stat-label">Ventes aujourd'hui</span>
-            </div>
-          </div>
-          
-          <div className="stat-item">
-            <span className="stat-icon">✅</span>
-            <div className="stat-info">
-              <span className="stat-value">0</span>
+              <span className="stat-value">{paidToday}</span>
               <span className="stat-label">Payées</span>
             </div>
           </div>
         </div>
-
-        {/* Notifications */}
         <div className="notifications-container">
           <button 
             className="notification-btn"
@@ -183,7 +176,6 @@ const Header = () => {
               <span className="notification-badge">{getUnreadCount()}</span>
             )}
           </button>
-
           {showNotifications && (
             <div className="notifications-dropdown">
               <div className="notifications-header">
@@ -197,7 +189,6 @@ const Header = () => {
                   </button>
                 )}
               </div>
-              
               <div className="notifications-list">
                 {notifications.length > 0 ? (
                   notifications.map(notification => (
@@ -228,58 +219,16 @@ const Header = () => {
             </div>
           )}
         </div>
-
-        {/* Menu profil */}
-        <div className="profile-container">
-          <button 
-            className="profile-btn"
-            onClick={() => setShowProfileMenu(!showProfileMenu)}
-          >
-            <div className="profile-avatar">
-              {user?.email?.charAt(0).toUpperCase() || 'A'}
+        {/* Modale de paiement fictive */}
+        {showPayModal && (
+          <div className="pay-modal-overlay" onClick={() => setShowPayModal(false)}>
+            <div className="pay-modal" onClick={e => e.stopPropagation()}>
+              <h3>Paiement</h3>
+              <p>Fonctionnalité de paiement à venir !</p>
+              <button className="close-pay-modal" onClick={() => setShowPayModal(false)}>Fermer</button>
             </div>
-            <span className="profile-name">
-              {user?.email || 'Administrateur'}
-            </span>
-            <span className="dropdown-arrow">▼</span>
-          </button>
-
-          {showProfileMenu && (
-            <div className="profile-dropdown">
-              <div className="profile-info">
-                <div className="profile-avatar large">
-                  {user?.email?.charAt(0).toUpperCase() || 'A'}
-                </div>
-                <div className="profile-details">
-                  <h4>{user?.email || 'Administrateur'}</h4>
-                  <p>Administrateur SOGEPI</p>
-                </div>
-              </div>
-              
-              <div className="dropdown-divider"></div>
-              
-              <button className="dropdown-item">
-                <span className="item-icon">👤</span>
-                Mon profil
-              </button>
-              
-              <button className="dropdown-item">
-                <span className="item-icon">⚙️</span>
-                Paramètres
-              </button>
-              
-              <div className="dropdown-divider"></div>
-              
-              <button 
-                className="dropdown-item logout"
-                onClick={handleLogout}
-              >
-                <span className="item-icon">🚪</span>
-                Déconnexion
-              </button>
-            </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </header>
   );

@@ -9,6 +9,7 @@ import Invoices from './pages/Invoices';
 import Products from './pages/Products';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
+import Inventory from './components/Inventory';
 import './styles/main.css';
 
 function App() {
@@ -49,6 +50,12 @@ function App() {
         return <Invoices />;
       case 'products':
         return <Products />;
+      case 'inventory-3mois':
+        return <Inventory period="3mois" />;
+      case 'inventory-6mois':
+        return <Inventory period="6mois" />;
+      case 'inventory-annuel':
+        return <Inventory period="annuel" />;
       default:
         return <Dashboard />;
     }
