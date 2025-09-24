@@ -222,14 +222,25 @@ const SalesForm = ({ products = [], onSave, onCancel }) => {
           <div className="form-group">
             <label htmlFor="client">Client</label>
             <input
-              id="client"
-              type="text"
-              value={saleData.client}
-              onChange={(e) =>
-                setSaleData((prev) => ({ ...prev, client: e.target.value }))
-              }
-              required
-            />
+                id="client"
+                type="text"
+                value={saleData.client}
+                onChange={(e) =>
+                  setSaleData((prev) => ({ ...prev, client: e.target.value }))
+                }
+                required
+                style={{
+                  background: '#fff',
+                  color: '#222',
+                  padding: '10px',
+                  borderRadius: '6px',
+                  border: '1px solid #ddd',
+                  fontSize: '1rem',
+                  width: '100%',
+                  boxSizing: 'border-box',
+                  outline: 'none',
+                }}
+              />
           </div>
 
           {/* Mode de paiement */}
