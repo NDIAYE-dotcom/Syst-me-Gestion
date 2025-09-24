@@ -64,7 +64,7 @@ const Login = () => {
           content: 'Connexion réussie! Redirection...'
         });
         setTimeout(() => {
-          window.location.href = '/dashboard';
+          window.location.href = `${import.meta.env.BASE_URL}dashboard`;
         }, 1000);
       } else {
         // Inscription - seulement pour les administrateurs
@@ -96,7 +96,7 @@ const Login = () => {
     <div className="login-container">
       <div className="login-card glass-effect animate-fade-in">
         <div className="login-header">
-              <img src="/logo-SOGEPI.png" alt="Logo SOGEPI" className="login-logo" style={{marginBottom: '12px'}} />
+              <img src={import.meta.env.BASE_URL + 'logo-SOGEPI.png'} alt="Logo SOGEPI" className="login-logo" style={{marginBottom: '12px'}} />
           <h1 style={{display:'flex',alignItems:'center',justifyContent:'center',gap:'8px'}}>
             <span style={{fontWeight:800,letterSpacing:'1px'}}>SOGEPI Afrique S.A.R.L.</span>
             <span style={{fontSize:'1.5rem',color:'#228b22'}}>🌱</span>

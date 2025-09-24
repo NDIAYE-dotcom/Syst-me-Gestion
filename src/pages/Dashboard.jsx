@@ -170,18 +170,18 @@ const Dashboard = () => {
         </div>
         
         <div className="stat-card">
-          <h3>Factures Payées</h3>
-          <div className="stat-value success">{totals.paidInvoices}</div>
+         <h3><span style={{marginRight:'8px',display:'inline-flex',alignItems:'center'}}><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="12" fill="#43cea2"/><path d="M7 13.5l3 3 7-7" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></svg></span>Factures Payées</h3>
+         <div className="stat-value success">{totals.paidInvoices}</div>
         </div>
         
         <div className="stat-card">
-          <h3>Factures Impayées</h3>
-          <div className="stat-value warning">{totals.unpaidInvoices}</div>
+         <h3><span style={{marginRight:'8px',display:'inline-flex',alignItems:'center'}}><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="12" fill="#ed6c02"/><path d="M8 8l8 8M16 8l-8 8" stroke="#fff" strokeWidth="2.5" strokeLinecap="round"/></svg></span>Factures Impayées</h3>
+         <div className="stat-value warning">{totals.unpaidInvoices}</div>
         </div>
         
         <div className="stat-card">
-          <h3>Factures Pro Forma</h3>
-          <div className="stat-value info">{totals.proformaInvoices}</div>
+         <h3><span style={{marginRight:'8px',display:'inline-flex',alignItems:'center'}}><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="4" fill="#1976d2"/><rect x="7" y="7" width="10" height="2" rx="1" fill="#fff"/><rect x="7" y="11" width="10" height="2" rx="1" fill="#fff"/><rect x="7" y="15" width="6" height="2" rx="1" fill="#fff"/></svg></span>Factures Pro Forma</h3>
+         <div className="stat-value info">{totals.proformaInvoices}</div>
         </div>
       </div>
 

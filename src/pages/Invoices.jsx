@@ -11,7 +11,7 @@ import Invoice from '../components/Invoice';
 function useLogoBase64() {
   const [logoBase64, setLogoBase64] = React.useState(null);
   React.useEffect(() => {
-    fetch('/logo-SOGEPI.png')
+    fetch(import.meta.env.BASE_URL + 'logo-SOGEPI.png')
       .then(res => res.blob())
       .then(blob => {
         const reader = new window.FileReader();
@@ -94,7 +94,7 @@ const Invoices = () => {
             <button className="invoice-close-btn" onClick={()=>setSelectedSale(null)}>&times;</button>
             <Invoice 
               sale={selectedSale} 
-              logo={selectedSale.ischetak === true || selectedSale.ischetak === 'true' ? '/LogoChetak-01.png' : logoSogepiBase64} 
+              logo={selectedSale.ischetak === true || selectedSale.ischetak === 'true' ? import.meta.env.BASE_URL + 'LogoChetak-01.png' : logoSogepiBase64} 
             />
             {(selectedSale.status === 'unpaid' || selectedSale.status === 'proforma') && (
               <button className="btn-primary" style={{marginTop:'18px'}} onClick={()=>handleUpdateStatus(selectedSale, 'paid')}>

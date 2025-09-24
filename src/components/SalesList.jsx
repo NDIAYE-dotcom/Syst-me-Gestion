@@ -7,7 +7,7 @@ const logoSogepiBase64 = "data:image/png;base64,ATTACHEZ_ICI_LA_CHAINE_BASE64_CO
 function useLogoBase64() {
 	const [logoBase64, setLogoBase64] = React.useState(null);
 	React.useEffect(() => {
-		fetch('/logo-SOGEPI.png')
+		fetch(import.meta.env.BASE_URL + 'logo-SOGEPI.png')
 			.then(res => res.blob())
 			.then(blob => {
 				const reader = new window.FileReader();

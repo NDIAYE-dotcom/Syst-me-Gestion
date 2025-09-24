@@ -10,7 +10,7 @@ function formatFCFA(n) {
 
 const Invoice = ({ sale, logo }) => {
   // Logo Chetak si facture Chetak
-  const chetakLogo = '/LogoChetak-01.png';
+  const chetakLogo = import.meta.env.BASE_URL + 'LogoChetak-01.png';
   const isChetak = sale.ischetak === true || sale.ischetak === 'true';
   const invoiceRef = useRef();
 
