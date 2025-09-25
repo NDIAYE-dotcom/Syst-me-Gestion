@@ -70,17 +70,21 @@ const Products = () => {
 
   return (
     <div className="page">
-      <div className="page-header">
-        <h1>Gestion des Produits/Services</h1>
-        <button 
-          className="btn-primary" 
-          onClick={() => {
-            setEditingProduct(null);
-            setShowForm(true);
-          }}
-        >
-          Ajouter un Produit
-        </button>
+      <div className="page-header" style={{justifyContent:'center',alignItems:'center',display:'flex',flexDirection:'column'}}>
+        <h1 style={{textAlign:'center',width:'100%',margin:'0 auto'}}>Gestion des Produits/Services</h1>
+        <div style={{width:'100%',display:'flex',justifyContent:'center',alignItems:'center'}}>
+          <div style={{maxWidth:'220px',width:'100%',margin:'0 auto'}}>
+            <button 
+              className="btn-primary" 
+              onClick={() => {
+                setEditingProduct(null);
+                setShowForm(true);
+              }}
+            >
+              Ajouter un Produit
+            </button>
+          </div>
+        </div>
       </div>
 
       {showForm && (

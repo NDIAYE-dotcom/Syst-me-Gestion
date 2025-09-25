@@ -79,11 +79,13 @@ const Sales = () => {
     <div className="page">
       <div className="page-header">
         <h1>Gestion des Ventes</h1>
-        <div style={{display:'flex',gap:'12px'}}>
-          <button className="btn-primary" onClick={handleNewSale}>
-            Nouvelle Vente
-          </button>
-          <button className="btn-secondary" style={{background:'#1976d2',color:'#fff',fontWeight:'bold'}} onClick={handleNewChetak}>Facture Chetak</button>
+        <div style={{width:'100%',display:'flex',justifyContent:'center'}}>
+          <div style={{display:'flex',gap:'12px',justifyContent:'center',flexWrap:'wrap',maxWidth:'600px',width:'100%'}}>
+            <button className="btn-primary" style={{minWidth:'220px'}} onClick={handleNewSale}>
+              Nouvelle Vente
+            </button>
+            <button className="btn-primary" style={{minWidth:'220px'}} onClick={handleNewChetak}>Facture Chetak</button>
+          </div>
         </div>
       </div>
 
