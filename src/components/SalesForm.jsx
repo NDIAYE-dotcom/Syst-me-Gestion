@@ -163,6 +163,25 @@ const SalesForm = ({ products = [], onSave, onCancel }) => {
   return (
     <div className="modal-overlay">
       <div className="modal">
+        <button
+          type="button"
+          onClick={onCancel}
+          style={{
+            position: 'sticky',
+            top: 0,
+            left: 0,
+            width: '100%',
+            background: 'rgba(25,118,210,0.95)',
+            color: '#fff',
+            fontWeight: 700,
+            fontSize: '1.1rem',
+            border: 'none',
+            borderRadius: '0 0 8px 8px',
+            padding: '10px',
+            zIndex: 10000,
+            boxShadow: '0 2px 8px rgba(25,118,210,0.13)',
+          }}
+        >Fermer ✕</button>
         <h2>Nouvelle Vente</h2>
 
         {error && (
