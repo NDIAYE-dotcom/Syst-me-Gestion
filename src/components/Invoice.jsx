@@ -9,6 +9,17 @@ function formatFCFA(n) {
 }
 
 const Invoice = ({ sale, logo }) => {
+  React.useEffect(() => {
+    // Ajoute la classe 'modal-open' au body sur mobile
+    if (window.innerWidth <= 600) {
+      document.body.classList.add('modal-open');
+    }
+    return () => {
+      if (window.innerWidth <= 600) {
+        document.body.classList.remove('modal-open');
+      }
+    };
+  }, []);
   // Logo Chetak si facture Chetak
   const chetakLogo = import.meta.env.BASE_URL + 'LogoChetak-01.png';
   const isChetak = sale.ischetak === true || sale.ischetak === 'true';
