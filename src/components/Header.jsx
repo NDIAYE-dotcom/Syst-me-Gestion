@@ -141,6 +141,11 @@ const Header = () => {
     return 'Bonsoir';
   };
 
+  // Détecte si un modal de vente ou d'ajout de produit est ouvert
+  // Correction : ne cache la navbar que si le modal est visible ET le body a la classe 'modal-open'
+  const isMobile = window.innerWidth <= 600;
+  const isModalOpen = isMobile && document.body.classList.contains('modal-open');
+  if (isModalOpen) return null;
   return (
     <header className="header">
       <div className="header-left" style={{ display: 'flex', alignItems: 'center', gap: '18px' }}>
