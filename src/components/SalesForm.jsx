@@ -180,6 +180,7 @@ const SalesForm = ({ products = [], onSave, onCancel }) => {
             padding: '10px',
             zIndex: 10000,
             boxShadow: '0 2px 8px rgba(25,118,210,0.13)',
+            marginTop: '56px', // Espace pour la navbar mobile
           }}
         >Fermer ✕</button>
         <h2>Nouvelle Vente</h2>
