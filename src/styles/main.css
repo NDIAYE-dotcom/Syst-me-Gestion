@@ -459,9 +459,9 @@ body.theme-dark {
     right: 0;
     bottom: 0;
     width: 100vw;
-    height: 100vh;
-    max-height: 100vh;
-    min-height: 100vh;
+    height: 100dvh;
+    max-height: 100dvh;
+    min-height: 100dvh;
     border-radius: 0;
     padding: 12px 4px 24px 4px;
     overflow-y: auto;

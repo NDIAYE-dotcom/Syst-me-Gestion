@@ -2,13 +2,17 @@
 import React, { useMemo, useState } from "react";
 import { useEffect } from "react";
 import { enableModalInputScroll } from '../utils/focusScroll';
+import { enableMobileModalResize } from '../utils/mobileModalResize';
 
 const SalesForm = ({ products = [], onSave, onCancel }) => {
   useEffect(() => {
     // Active le scroll auto sur mobile quand le modal est monté
-    const cleanup = enableModalInputScroll('.modal');
+    const cleanupScroll = enableModalInputScroll('.modal');
+    // Active le resize dynamique du modal sur mobile
+    const cleanupResize = enableMobileModalResize('.modal');
     return () => {
-      if (cleanup) cleanup();
+      if (cleanupScroll) cleanupScroll();
+      if (cleanupResize) cleanupResize();
     };
   }, []);
   const [saleData, setSaleData] = useState({
