@@ -3,6 +3,7 @@ import React, { useMemo, useState } from "react";
 import { useEffect } from "react";
 import { enableModalInputScroll } from '../utils/focusScroll';
 import { enableMobileModalResize } from '../utils/mobileModalResize';
+import { enableKeyboardSafeModal } from '../utils/mobileKeyboardSafeModal';
 
 const SalesForm = ({ products = [], onSave, onCancel }) => {
   useEffect(() => {
@@ -10,9 +11,12 @@ const SalesForm = ({ products = [], onSave, onCancel }) => {
     const cleanupScroll = enableModalInputScroll('.modal');
     // Active le resize dynamique du modal sur mobile
     const cleanupResize = enableMobileModalResize('.modal');
+    // Système avancé : gestion du clavier et du padding
+    const cleanupKeyboardSafe = enableKeyboardSafeModal('.modal');
     return () => {
       if (cleanupScroll) cleanupScroll();
       if (cleanupResize) cleanupResize();
+      if (cleanupKeyboardSafe) cleanupKeyboardSafe();
     };
   }, []);
   const [saleData, setSaleData] = useState({
