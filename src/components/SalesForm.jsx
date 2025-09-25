@@ -1,7 +1,16 @@
 // components/SalesForm.jsx
 import React, { useMemo, useState } from "react";
+import { useEffect } from "react";
+import { enableModalInputScroll } from '../utils/focusScroll';
 
 const SalesForm = ({ products = [], onSave, onCancel }) => {
+  useEffect(() => {
+    // Active le scroll auto sur mobile quand le modal est monté
+    const cleanup = enableModalInputScroll('.modal');
+    return () => {
+      if (cleanup) cleanup();
+    };
+  }, []);
   const [saleData, setSaleData] = useState({
     product_ids: [], // tableau d'IDs produits sélectionnés
     productsDetails: {}, // { id: { quantity, price } }
