@@ -7,6 +7,10 @@ import { enableKeyboardSafeModal } from '../utils/mobileKeyboardSafeModal';
 
 const SalesForm = ({ products = [], onSave, onCancel }) => {
   useEffect(() => {
+    // Ajoute la classe 'modal-open' au body sur mobile
+    if (window.innerWidth <= 600) {
+      document.body.classList.add('modal-open');
+    }
     // Active le scroll auto sur mobile quand le modal est monté
     const cleanupScroll = enableModalInputScroll('.modal');
     // Active le resize dynamique du modal sur mobile
@@ -14,6 +18,9 @@ const SalesForm = ({ products = [], onSave, onCancel }) => {
     // Système avancé : gestion du clavier et du padding
     const cleanupKeyboardSafe = enableKeyboardSafeModal('.modal');
     return () => {
+      if (window.innerWidth <= 600) {
+        document.body.classList.remove('modal-open');
+      }
       if (cleanupScroll) cleanupScroll();
       if (cleanupResize) cleanupResize();
       if (cleanupKeyboardSafe) cleanupKeyboardSafe();

@@ -2,6 +2,17 @@
 import React, { useState } from 'react';
 
 const ProductForm = ({ product, categories, onSave, onCancel }) => {
+  React.useEffect(() => {
+    // Ajoute la classe 'modal-open' au body sur mobile
+    if (window.innerWidth <= 600) {
+      document.body.classList.add('modal-open');
+    }
+    return () => {
+      if (window.innerWidth <= 600) {
+        document.body.classList.remove('modal-open');
+      }
+    };
+  }, []);
   const [formData, setFormData] = useState({
     name: product?.name || '',
     category: product?.category || categories[0] || '',
