@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { enableModalInputScroll } from '../utils/focusScroll';
 import { enableMobileModalResize } from '../utils/mobileModalResize';
 import { enableKeyboardSafeModal } from '../utils/mobileKeyboardSafeModal';
+import { enableIOSKeyboardSafeModal } from '../utils/iosKeyboardSafeModal';
 
 const SalesForm = ({ products = [], onSave, onCancel }) => {
   useEffect(() => {
@@ -17,6 +18,8 @@ const SalesForm = ({ products = [], onSave, onCancel }) => {
     const cleanupResize = enableMobileModalResize('.modal');
     // Système avancé : gestion du clavier et du padding
     const cleanupKeyboardSafe = enableKeyboardSafeModal('.modal');
+  // Optimisation iOS/Safari : padding dynamique et scroll forcé
+  const cleanupIOS = enableIOSKeyboardSafeModal('.modal');
     return () => {
       if (window.innerWidth <= 600) {
         document.body.classList.remove('modal-open');
@@ -24,6 +27,7 @@ const SalesForm = ({ products = [], onSave, onCancel }) => {
       if (cleanupScroll) cleanupScroll();
       if (cleanupResize) cleanupResize();
       if (cleanupKeyboardSafe) cleanupKeyboardSafe();
+      if (cleanupIOS) cleanupIOS();
     };
   }, []);
   const [saleData, setSaleData] = useState({
