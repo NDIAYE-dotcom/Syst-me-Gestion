@@ -23,6 +23,10 @@ const Invoice = ({ sale, logo }) => {
   // Logo Chetak si facture Chetak
   const chetakLogo = import.meta.env.BASE_URL + 'LogoChetak-01.png';
   const isChetak = sale.ischetak === true || sale.ischetak === 'true';
+  // Signature SOGEPI (dans /public)
+  const signatureUrl = import.meta.env.BASE_URL + 'Signature SOGEPI.png';
+  // Cachet spécifique pour les factures Chetak
+  const cachetChetakUrl = import.meta.env.BASE_URL + 'Cachet Chetak S.png';
   const invoiceRef = useRef();
 
   const tvaRate = sale.notaxinfo ? 0 : 0.18;
@@ -48,7 +52,7 @@ const Invoice = ({ sale, logo }) => {
     window.print();
   };
 
-  const handleDownloadPDF = () => {
+  const handleDownloadPDF = async () => {
     try {
       const doc = new jsPDF();
       // Dimensions et marges
@@ -194,12 +198,85 @@ const Invoice = ({ sale, logo }) => {
       doc.setFontSize(12);
       doc.setTextColor(0,0,0);
       doc.text(`Mode de règlement : ${sale.payment_method || ''}`, marginX, doc.lastAutoTable.finalY + 18);
+
+  // Ajouter la signature SOGEPI juste avant le footer (si applicable)
+  if (!isChetak) {
+        try {
+          // Charger l'image de la signature en base64
+          const sigResp = await fetch(signatureUrl);
+          if (sigResp && sigResp.ok) {
+            const sigBlob = await sigResp.blob();
+            const reader = new FileReader();
+            const sigDataUrl = await new Promise((resolve, reject) => {
+              reader.onloadend = () => resolve(reader.result);
+              reader.onerror = reject;
+              reader.readAsDataURL(sigBlob);
+            });
+            // Créer un objet Image pour obtenir le ratio et préserver les proportions
+            const imgEl = await new Promise((resolve, reject) => {
+              const im = new Image();
+              im.onload = () => resolve(im);
+              im.onerror = reject;
+              im.src = sigDataUrl;
+            });
+            const ratio = (imgEl.width && imgEl.height) ? (imgEl.width / imgEl.height) : 1;
+            // Définir une largeur maxi en unités du document et calculer la hauteur en conservant le ratio
+            const maxSigWidth = 60; // ajustable
+            const sigWidth = Math.min(maxSigWidth, pageWidth / 2);
+            const sigHeight = sigWidth / ratio;
+            const sigX = pageWidth - marginX - sigWidth; // aligné à droite
+            const sigY = doc.lastAutoTable ? doc.lastAutoTable.finalY + 28 : pageHeight - 120;
+            try {
+              doc.addImage(sigDataUrl, 'PNG', sigX, sigY, sigWidth, sigHeight);
+            } catch (e) {
+              // ignore si l'image ne peut pas être ajoutée
+            }
+          }
+        } catch (e) {
+          // ignore erreurs signature
+        }
+      }
+      
+      // Ajouter le cachet Chetak avant le footer pour les factures Chetak
+      if (isChetak) {
+        try {
+          const resp = await fetch(cachetChetakUrl);
+          if (resp && resp.ok) {
+            const blob = await resp.blob();
+            const reader2 = new FileReader();
+            const dataUrl = await new Promise((resolve, reject) => {
+              reader2.onloadend = () => resolve(reader2.result);
+              reader2.onerror = reject;
+              reader2.readAsDataURL(blob);
+            });
+            const imgEl = await new Promise((resolve, reject) => {
+              const im = new Image();
+              im.onload = () => resolve(im);
+              im.onerror = reject;
+              im.src = dataUrl;
+            });
+            const ratio2 = (imgEl.width && imgEl.height) ? (imgEl.width / imgEl.height) : 1;
+            const maxSigWidth2 = 50;
+            const sigWidth2 = Math.min(maxSigWidth2, pageWidth / 2);
+            const sigHeight2 = sigWidth2 / ratio2;
+            const sigX2 = (pageWidth - sigWidth2) / 2; // centré
+            const sigY2 = doc.lastAutoTable ? doc.lastAutoTable.finalY + 28 : pageHeight - 120;
+            try {
+              doc.addImage(dataUrl, 'PNG', sigX2, sigY2, sigWidth2, sigHeight2);
+            } catch (e) {
+              // ignore
+            }
+          }
+        } catch (e) {
+          // ignore
+        }
+      }
       // Footer moderne centré et gris
       doc.setFontSize(10);
       doc.setTextColor(120,120,120);
       if (isChetak) {
-  doc.text('+221 77 606 29 00 - 77 512 30 76', pageWidth/2, 275, {align:'center'});
-  doc.text('RUE TOLBIAC N°12 - DAKAR SENEGAL', pageWidth/2, 281, {align:'center'});
+        doc.text('+221 77 606 29 00 - 77 512 30 76', pageWidth/2, 275, {align:'center'});
+        doc.text('RUE TOLBIAC N°12 - DAKAR SENEGAL', pageWidth/2, 281, {align:'center'});
       } else {
         doc.text('+221 77 606 29 00 - 77 512 30 76', pageWidth/2, 275, {align:'center'});
         doc.text('RUE TOLBIAC N°12 - DAKAR SENEGAL', pageWidth/2, 281, {align:'center'});
@@ -278,9 +355,23 @@ const Invoice = ({ sale, logo }) => {
       </div>
       <div style={{marginTop:'32px',fontSize:'0.95em',color:'#228b22',textAlign:'center'}}>
         {isChetak ? (
-          <>Chetak Senegal<br/>www.chetak-senegal.com<br/></>
+          <>
+            {/* Cachet Chetak affiché juste avant le pied de page (visible à l'impression) */}
+            <div style={{marginTop:16, marginBottom:8, textAlign:'center'}}>
+              <div style={{width:80, height:80, display:'inline-block', overflow:'hidden', borderRadius:'50%'}}>
+                <img src={cachetChetakUrl} alt="Cachet Chetak" style={{width:'100%', height:'100%', objectFit:'contain', display:'block'}} />
+              </div>
+            </div>
+            Chetak Senegal<br/>www.chetak-senegal.com<br/>
+          </>
         ) : (
           <>
+            {/* Signature affichée juste avant le pied de page */}
+            <div style={{marginTop:16, marginBottom:8, textAlign:'right'}}>
+            <div style={{width:120, height:120, display:'inline-block', overflow:'hidden', borderRadius:'50%'}}>
+             <img src={signatureUrl} alt="Signature SOGEPI" style={{width:'100%', height:'100%', objectFit:'contain', display:'block'}} />
+            </div>
+            </div>
             +221 77 606 29 00 - 77 512 30 76<br/>
             RUE TOLBIAC N°12 - DAKAR SENEGAL<br/>
             {!sale.notaxinfo && (
