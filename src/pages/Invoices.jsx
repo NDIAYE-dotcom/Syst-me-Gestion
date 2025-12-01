@@ -89,8 +89,8 @@ const Invoices = () => {
         <h1>Gestion des Factures</h1>
       </div>
       {selectedSale && selectedSale.id ? (
-        <div style={{position:'fixed',top:0,left:0,right:0,bottom:0,zIndex:2000,background:'rgba(0,0,0,0.6)',display:'flex',alignItems:'center',justifyContent:'center'}}>
-          <div style={{background:'#fff',borderRadius:'12px',padding:'24px',maxWidth:'850px',width:'100%',boxShadow:'0 2px 24px rgba(0,0,0,0.18)',position:'relative'}}>
+        <div style={{position:'fixed',top:0,left:0,right:0,bottom:0,zIndex:2000,background:'rgba(0,0,0,0.6)',display:'flex',alignItems:'flex-start',justifyContent:'center',overflowY:'auto',paddingTop:20,WebkitOverflowScrolling:'touch'}}>
+          <div style={{background:'#fff',borderRadius:'12px',padding:'24px',maxWidth:'850px',width:'100%',boxShadow:'0 2px 24px rgba(0,0,0,0.18)',position:'relative',maxHeight:'calc(100vh - 40px)',overflowY:'auto',WebkitOverflowScrolling:'touch'}}>
             <button className="invoice-close-btn" onClick={()=>setSelectedSale(null)}>&times;</button>
             <Invoice 
               sale={selectedSale} 
